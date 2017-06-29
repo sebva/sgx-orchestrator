@@ -29,4 +29,5 @@ services:
     image: grafana/grafana:4.3.2
     ports:
       - "3000:3000"
-
+  sgx:
+    image: dummy-sgx:latest
