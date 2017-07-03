@@ -11,7 +11,7 @@
       "units": "pages",
       "data_type": "int",
       "polling_frequency": 1,
-      "regex": "SGX_IOC_EPC_USAGE: ([0-9]+)"
+      "regex": "dummy: ([0-9]+)"
     }
   ]
 }
