@@ -1,5 +1,9 @@
 {
-  "endpoint": "http://:4567/",
+  "endpoint": {
+    "protocol": "http",
+    "port": 4567,
+    "path": "/"
+  },
   "metrics_config": [
     {
       "name": "epcUsage",
