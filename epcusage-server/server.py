@@ -3,6 +3,9 @@ import re
 from fcntl import fcntl, F_SETFL
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
+import docker
+import psutil
+
 
 class Collector(BaseHTTPRequestHandler):
     def __init__(self, request, client_address, server):
@@ -22,12 +25,33 @@ class Collector(BaseHTTPRequestHandler):
 
 def run_server_forever():
     print("Server is about to start")
-    httpd = HTTPServer(('0.0.0.0', 4567), Collector)
+    httpd = HTTPServer(('0.0.0.0', 100), Collector)
     try:
         print("Server will serve on port %d" % httpd.server_port)
         httpd.serve_forever()
     except KeyboardInterrupt:
         pass
+
+
+class DockerMetrics(object):
+    def __init__(self):
+        self.dker = docker.from_env()
+
+    def epc_usage_for_container(self, container_id) -> float:
+        return 0
+
+    def container_id_for_ip(self, ip_address):
+        for net in self.dker.networks.list():
+            for container_id, container_data in net.attrs["Containers"].items():
+                if container_data["IPv4Address"].split("/")[0] == ip_address or \
+                                container_data["IPv6Address"].split("/")[0] == ip_address:
+                    return container_id
+        return None
+
+    def pids_of_container(self, container_id):
+        parent_pid = self.dker.containers.get(container_id).attrs["State"]["Pid"]
+        proc = psutil.Process(parent_pid)
+        proc.children(recursive=True)
 
 
 class IsgxDriver(object):
@@ -81,6 +105,6 @@ class IsgxDriver(object):
 
 
 if __name__ == "__main__":
-    driver = IsgxDriver()
-    print(driver._epc_ranges)
-    # run_server_forever()
+    # driver = IsgxDriver()
+    # print(driver._epc_ranges)
+    run_server_forever()
