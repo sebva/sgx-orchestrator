@@ -73,6 +73,11 @@ kubernetesVersion: v1.8.0
 ```ini
 Environment="KUBELET_NETWORK_ARGS=--network-plugin=cni --cni-conf-dir=/etc/cni/net.d --cni-bin-dir=/opt/cni/bin"
 ```
+4. Add the following line in 
+`/etc/systemd/system/kubelet.service.d/kubeadm-10.conf`
+```ini
+Environment="KUBELET_EXTRA_ARGS=--feature-gates=DevicePlugins=true"
+```
 4. Reload `kubelet`
 ```bash
 sudo systemctl daemon-reload
