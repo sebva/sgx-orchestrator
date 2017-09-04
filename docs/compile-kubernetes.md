@@ -41,6 +41,15 @@ docker push 127.0.0.1:5000/k8s-dns-dnsmasq-nanny-amd64:1.14.4
 docker pull gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.4
 docker tag gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.4 127.0.0.1:5000/k8s-dns-sidecar-amd64:1.14.4
 docker push 127.0.0.1:5000/k8s-dns-sidecar-amd64:1.14.4
+docker pull gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.4
+docker tag gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.4 127.0.0.1:5000/k8s-dns-sidecar-amd64:1.14.4
+docker push 127.0.0.1:5000/k8s-dns-sidecar-amd64:1.14.4
+docker pull weaveworks/weave-npc:2.0.4
+docker tag weaveworks/weave-npc:2.0.4 127.0.0.1:5000/weaveworks/weave-npc:2.0.4
+docker push 127.0.0.1:5000/weaveworks/weave-npc:2.0.4
+docker pull weaveworks/weave-kube:2.0.4
+docker tag weaveworks/weave-kube:2.0.4 127.0.0.1:5000/weaveworks/weave-kube:2.0.4
+docker push 127.0.0.1:5000/weaveworks/weave-kube:2.0.4
 ```
 6. Transfer the install packages to the target machine
 ```bash
