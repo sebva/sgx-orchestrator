@@ -23,12 +23,12 @@ make quick-release
 ```
 5. Push the Docker containers
 ```bash
-docker push 127.0.0.1:5000/kube-apiserver-amd64
-docker push 127.0.0.1:5000/kube-controller-manager-amd64
-docker push 127.0.0.1:5000/cloud-controller-manager-amd64
-docker push 127.0.0.1:5000/kube-aggregator-amd64
-docker push 127.0.0.1:5000/kube-scheduler-amd64
-docker push 127.0.0.1:5000/kube-proxy-amd64
+docker push 127.0.0.1:5000/kube-apiserver-amd64:v1.8.0
+docker push 127.0.0.1:5000/kube-controller-manager-amd64:v1.8.0
+docker push 127.0.0.1:5000/cloud-controller-manager-amd64:v1.8.0
+docker push 127.0.0.1:5000/kube-aggregator-amd64:v1.8.0
+docker push 127.0.0.1:5000/kube-scheduler-amd64:v1.8.0
+docker push 127.0.0.1:5000/kube-proxy-amd64:v1.8.0
 docker pull gcr.io/google_containers/etcd-amd64:3.0.17
 docker tag gcr.io/google_containers/etcd-amd64:3.0.17 127.0.0.1:5000/etcd-amd64:3.0.17
 docker push 127.0.0.1:5000/etcd-amd64:3.0.17
@@ -68,6 +68,8 @@ sudo dpkg -i *.deb
 apiVersion: kubeadm.k8s.io/v1alpha1
 imageRepository: "172.16.0.25:5000"
 kubernetesVersion: v1.8.0
+apiServerExtraArgs:
+  feature-gates: "DevicePlugins=true"
 ```
 3. Remove the following line from `/etc/systemd/system/kubelet.service.d/kubeadm-10.conf`
 ```ini
