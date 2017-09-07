@@ -1,7 +1,9 @@
+#!/usr/bin/env python3
 import time
 from concurrent import futures
 
 import grpc
+import os
 
 from api import api_pb2
 from api import api_pb2_grpc
@@ -59,11 +61,24 @@ def register():
     return response
 
 
+def check_sgx():
+    return os.path.exists('/dev/isgx')
+
+
 if __name__ == '__main__':
-    server = serve()
-    register()
+    if not check_sgx():
+        print("No SGX device detected, exiting...")
+        exit(0)
+
     try:
-        while True:
-            time.sleep(3600)
-    except KeyboardInterrupt:
-        server.stop(0)
+        if register() is api_pb2.Empty:
+            server = serve()
+            print("Device plugin server ready!")
+            try:
+                while True:
+                    time.sleep(3600)
+            except KeyboardInterrupt:
+                server.stop(0)
+    except Exception as e:
+        print(e)
+        print("Error with the registration, exiting...")
