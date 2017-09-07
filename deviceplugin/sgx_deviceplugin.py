@@ -29,7 +29,7 @@ class SgxPluginService(api_pb2_grpc.DevicePluginServicer):
         return api_pb2.AllocateResponse(spec=[
             api_pb2.DeviceRuntimeSpec(
                 ID='sgx1',
-                envs=map(),
+                envs=dict(),
                 mounts=[],
                 devices=[
                     api_pb2.DeviceSpec(
