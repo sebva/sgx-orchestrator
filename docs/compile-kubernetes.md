@@ -63,6 +63,7 @@ echo ubuntu@172.16.0.2{5,6,7,8}:~ | xargs -n1 rsync -L --progress {kubeadm,kubec
 ```bash
 sudo dpkg -i *.deb
 ```
+2. Declare the registry running on the target machine as insecure on all machines. See [this page](https://docs.docker.com/registry/insecure/) for instructions.
 2. Create the config file for `kubeadm` (save as `kubeadm-config.yml`)
 ```yaml
 apiVersion: kubeadm.k8s.io/v1alpha1
