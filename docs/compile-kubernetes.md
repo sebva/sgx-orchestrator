@@ -86,7 +86,7 @@ sudo systemctl daemon-reload
 sudo systemctl restart kubelet
 ```
 5. Initialize the cluster
-    * Follow the instructions in [setup-kubernetes-cluster.md](docs/setup-kubernetes-cluster.md), but add the following flag to `kubeadm init`:
+    * Follow the instructions in [setup-kubernetes-cluster.md](setup-kubernetes-cluster.md), but add the following flag to `kubeadm init`:
 ```bash
 sudo kubeadm init --config kubeadm-config.yml
 ```
