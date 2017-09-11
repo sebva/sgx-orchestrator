@@ -8,6 +8,10 @@ We assume that the deployment is done on IIUN's _clusterinfo_.
 We tested the deployment on the Ubuntu 16.04 image (v5.4.0) that is available in OpenNebula Marketplace. At the time of writing, the image is downloaded as ID 913.
 We recommend a separate partition for Docker data which can be large (mounted at `/var/lib/docker`).
 
+## Physical machine
+
+If you are installing Kubernetes on a physical machine, you have to **completely disable its swap**!
+
 ## Pre-installation on all machines
 
 Connect as _root_ on all machines (use `clusterssh` for easier operation).
