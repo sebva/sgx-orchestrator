@@ -71,14 +71,19 @@ if __name__ == '__main__':
         exit(0)
 
     try:
-        if register() is api_pb2.Empty:
-            server = serve()
-            print("Device plugin server ready!")
+        print("Starting deviceplugin server")
+        server = serve()
+        print("deviceplugin server started")
+        print("Registering with Kubelet")
+        if isinstance(register(), api_pb2.Empty):
+            print("Registered, Kubelet should now call us back")
             try:
                 while True:
                     time.sleep(3600)
             except KeyboardInterrupt:
                 server.stop(0)
+        else:
+            print("Error with the registration, exiting...")
     except Exception as e:
         print(e)
         print("Error with the registration, exiting...")
