@@ -16,16 +16,17 @@ kubelet_socket_path = 'unix:///var/lib/kubelet/device-plugins/kubelet.sock'
 
 class SgxPluginService(api_pb2_grpc.DevicePluginServicer):
     def ListAndWatch(self, request: api_pb2.Empty, context):
-        print("ListAndWatch(%s, %s)" % (request, context))
+        print("Kubelet called ListAndWatch()")
         while True:
             total_epc = fetch_total_epc()
+            print("Returning %d pages to ListAndWatch()" % total_epc)
 
             devices = [api_pb2.Device(ID=("sgx%d" % x), health=healthy) for x in range(total_epc)]
             yield api_pb2.ListAndWatchResponse(devices=devices)
-            time.sleep(5)
+            time.sleep(10)
 
     def Allocate(self, request: api_pb2.AllocateRequest, context):
-        print("Allocate(%s, %s)" % (request, context))
+        print("Allocate(%d pages)" % request)
 
         requested_ids = request.devicesIDs
 
