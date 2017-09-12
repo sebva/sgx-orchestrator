@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
+import os
 import time
 from concurrent import futures
 
 import grpc
-import os
 
 from api import api_pb2
 from api import api_pb2_grpc
@@ -15,33 +15,54 @@ kubelet_socket_path = 'unix:///var/lib/kubelet/device-plugins/kubelet.sock'
 
 
 class SgxPluginService(api_pb2_grpc.DevicePluginServicer):
-    def ListAndWatch(self, request, context):
+    def ListAndWatch(self, request: api_pb2.Empty, context):
         print("ListAndWatch(%s, %s)" % (request, context))
         while True:
-            yield api_pb2.ListAndWatchResponse(devices=[
-                api_pb2.Device(
-                    ID="sgx1",
-                    health=healthy
-                )
-            ])
+            total_epc, free_epc = fetch_epc_stats()
+
+            devices = [api_pb2.Device(ID=("sgx%d" % x), health=healthy) for x in range(total_epc)]
+            yield api_pb2.ListAndWatchResponse(devices=devices)
             time.sleep(5)
 
-    def Allocate(self, request, context):
+    def Allocate(self, request: api_pb2.AllocateRequest, context):
         print("Allocate(%s, %s)" % (request, context))
-        return api_pb2.AllocateResponse(spec=[
-            api_pb2.DeviceRuntimeSpec(
-                ID='sgx1',
+
+        requested_ids = request.devicesIDs
+
+        devices = []
+        if len(requested_ids) > 0:
+            device0 = [api_pb2.DeviceRuntimeSpec(
+                ID=requested_ids[0],
                 envs=dict(),
                 mounts=[],
                 devices=[
                     api_pb2.DeviceSpec(
-                        container_path='/dev/sgx',
-                        host_path='/dev/sgx',
+                        container_path='/dev/isgx',
+                        host_path='/dev/isgx',
                         permissions='rw'
                     )
                 ]
-            )
-        ])
+            )]
+
+            devices = device0 + [
+                api_pb2.DeviceRuntimeSpec(
+                    ID=x,
+                    envs=dict(),
+                    mounts=[],
+                    devices=[]
+                )
+                for x in requested_ids[1:]
+            ]
+
+        return api_pb2.AllocateResponse(spec=devices)
+
+
+def fetch_epc_stats():
+    with open('/sys/module/isgx/parameters/sgx_nr_total_epc_pages') as f:
+        total_epc = int(f.readline())
+    with open('/sys/module/isgx/parameters/sgx_nr_free_pages') as f:
+        free_epc = int(f.readline())
+    return total_epc, free_epc
 
 
 def serve():
