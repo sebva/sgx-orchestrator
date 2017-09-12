@@ -18,7 +18,7 @@ class SgxPluginService(api_pb2_grpc.DevicePluginServicer):
     def ListAndWatch(self, request: api_pb2.Empty, context):
         print("ListAndWatch(%s, %s)" % (request, context))
         while True:
-            total_epc, free_epc = fetch_epc_stats()
+            total_epc = fetch_total_epc()
 
             devices = [api_pb2.Device(ID=("sgx%d" % x), health=healthy) for x in range(total_epc)]
             yield api_pb2.ListAndWatchResponse(devices=devices)
@@ -57,12 +57,9 @@ class SgxPluginService(api_pb2_grpc.DevicePluginServicer):
         return api_pb2.AllocateResponse(spec=devices)
 
 
-def fetch_epc_stats():
+def fetch_total_epc():
     with open('/sys/module/isgx/parameters/sgx_nr_total_epc_pages') as f:
-        total_epc = int(f.readline())
-    with open('/sys/module/isgx/parameters/sgx_nr_free_pages') as f:
-        free_epc = int(f.readline())
-    return total_epc, free_epc
+        return int(f.readline())
 
 
 def serve():
