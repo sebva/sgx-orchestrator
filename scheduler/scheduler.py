@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-import random
+import time
 from datetime import datetime
 from typing import List
 
-import time
-from kubernetes import *
-from kubernetes.client import models, V1ObjectMeta, V1ObjectReference, V1Event, V1EventSource
+from kubernetes import client, config
+from kubernetes.client import V1ObjectMeta, V1ObjectReference, V1Event, V1EventSource, V1Pod, V1Node, V1Binding
+
+from policy import policy_filter, policy_select
 
 scheduler_name = "efficient"
 
@@ -14,7 +15,7 @@ def init():
     config.load_kube_config()
 
 
-def list_unscheduled_pods() -> List[models.V1Pod]:
+def list_unscheduled_pods() -> List[V1Pod]:
     api = client.CoreV1Api()
     pods = api.list_pod_for_all_namespaces(
         field_selector=("spec.nodeName=,spec.schedulerName=%s" % scheduler_name)).items
@@ -22,11 +23,11 @@ def list_unscheduled_pods() -> List[models.V1Pod]:
     return pods
 
 
-def get_nodes() -> List[models.V1Node]:
+def get_nodes() -> List[V1Node]:
     return client.CoreV1Api().list_node().items
 
 
-def notify_binding(pod, node):
+def notify_binding(pod: V1Pod, node: V1Node):
     timestamp = datetime.utcnow().isoformat("T") + "Z"
 
     event = V1Event(
@@ -49,9 +50,9 @@ def notify_binding(pod, node):
     print("Event sent")
 
 
-def assign_pod_to_node(pod: models.V1Pod, node: models.V1Node):
+def assign_pod_to_node(pod: V1Pod, node: V1Node):
     print("Scheduling %s on %s" % (pod.metadata.name, node.metadata.name))
-    binding = models.V1Binding(
+    binding = V1Binding(
         api_version="v1",
         kind="Binding",
         metadata=V1ObjectMeta(
@@ -69,11 +70,12 @@ def assign_pod_to_node(pod: models.V1Pod, node: models.V1Node):
     notify_binding(pod, node)
 
 
-def schedule(pods: List[models.V1Pod]):
+def schedule(pods: List[V1Pod]):
     nodes = get_nodes()
     for pod in pods:
-        random_node = random.choice(nodes)
-        assign_pod_to_node(pod, random_node)
+        filtered_nodes = policy_filter(nodes, pod)
+        selected_node = policy_select(filtered_nodes, pod)
+        assign_pod_to_node(pod, selected_node)
 
 
 if __name__ == '__main__':
