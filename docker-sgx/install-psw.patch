@@ -1,0 +1,33 @@
+diff --git a/linux/installer/bin/install-sgx-psw.bin.tmpl b/linux/installer/bin/install-sgx-psw.bin.tmpl
+index f06cd53..fb0365b 100755
+--- a/linux/installer/bin/install-sgx-psw.bin.tmpl
++++ b/linux/installer/bin/install-sgx-psw.bin.tmpl
+@@ -30,28 +30,10 @@
+ #
+ #
+ 
+-modinfo isgx &> /dev/null
+-if [[ $? != "0" ]]; then
+-    lsmod | grep isgx &> /dev/null
+-    if [[ $? = "0" ]]; then
+-        echo "Warning: You did not follow the document to install the driver package"
+-        echo
+-    else
+-        echo "Please install the driver package before the PSW package"
+-        exit 4
+-    fi
+-fi
+-
+ set -e
+ 
+ PKG_NAME="Intel SGX PSW Package"
+ 
+-if test $(id -u) -ne 0; then
+-    echo "Root privilege is required to install $PKG_NAME."
+-    exit 4
+-fi
+-
+-
+ PKG_ARCH=@arch@
+ ARCH=$(arch)
+ 
