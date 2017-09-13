@@ -5,4 +5,4 @@ WORKDIR /usr/src/app
 RUN pip install --no-cache-dir kubernetes
 COPY scheduler.py .
 
-CMD ["python", "./scheduler.py"]
+CMD ["python", "-u", "./scheduler.py"]
