@@ -12,6 +12,31 @@ We recommend a separate partition for Docker data which can be large (mounted at
 
 If you are installing Kubernetes on a physical machine, you have to **completely disable its swap**!
 
+## Combine virtual and physical machines
+
+In order to use the desktop SGX machines that are in the cluster, it is a good idea to make them communicate with the VMs directly, without routing over that poor `clusterinfo` machine. To do so, you can join the SGX machine to the VLAN with ID 2100.
+
+* **Double check that the IP ranges and VLAN ID specified here are still correct by cross-checking in OpenNebula**
+* Choose a free IP in the range and hold it in OpenNebula (I chose `172.16.63.63`)
+* Find out the name of the network device that is connected to the switch in the cluster (`enp0s31f6` in this case)
+
+When you have gathered all the information, perform the changes:
+```
+sudo ip link add link enp0s31f6 name enp0s31f6.2100 type vlan id 2100  # Declare a virtual device
+sudo ip addr add 172.16.63.63/16 dev enp0s31f6.2100                    # Add an IP address to it
+sudo ip link set enp0s31f6.2100 up                                     # Bring up the device
+```
+
+Verify that the connection is direct between the nodes:
+```
+traceroute 172.16.0.25                               
+```
+The answer should be:
+```
+traceroute to 172.16.0.25 (172.16.0.25), 30 hops max, 60 byte packets
+ 1  172.16.0.25 (172.16.0.25)  0.566 ms  0.533 ms  0.536 ms
+```
+
 ## Pre-installation on all machines
 
 Connect as _root_ on all machines (use `clusterssh` for easier operation).
