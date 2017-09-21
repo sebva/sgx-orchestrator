@@ -19,6 +19,7 @@ Connect as _root_ on all machines (use `clusterssh` for easier operation).
 1. Install system updates
 2. Make sure that each machine has a distinct hostname, and that its IP address is referenced in `/etc/hosts`
 3. Install Docker using the `docker.io` package available in the regular Ubuntu repositories
+    1. Also install the tools related to the storage backend that Docker will be using. Eg. `aufs-tools` in the case of `aufs` (default in Ubuntu).
 4. Install `kubeadm` from the repository from Google
 ```
 apt install apt-transport-https
