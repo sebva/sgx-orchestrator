@@ -8,14 +8,16 @@
 ## Compilation
 
 1. Checkout the sources as described in [setup-kubernetes-ide.md](docs/setup-kubernetes-ide.md)
+    1. In order to get the _deviceplugins_ feature built-in, you can use the repository at https://github.com/sebyx31/kubernetes, on the `sgx-deviceplugin` branch.
 2. Compile the `.deb` packages
+    1. If bazel complains about faulty checksums, the file to modify is [`build/root/WORKSPACE`](https://github.com/sebyx31/kubernetes/blob/sgx-deviceplugin/build/root/WORKSPACE)
 ```bash
 bazel build //build/debs
 ```
 3. Setup a couple environment variables
 ```bash
 export KUBE_DOCKER_REGISTRY=127.0.0.1:5000  # The address of the Docker registry
-export KUBE_DOCKER_IMAGE_TAG=v1.8.0  # The version tag that will be referenced by _kubeadm_
+export KUBE_DOCKER_IMAGE_TAG=v1.8.0-beta.1  # The version tag that will be referenced by kubeadm
 ```
 4. Build the Docker containers
 ```bash
@@ -64,7 +66,7 @@ echo ubuntu@172.16.0.2{5,6,7,8}:~ | xargs -n1 rsync -L --progress {kubeadm,kubec
 sudo dpkg -i *.deb
 ```
 2. Declare the registry running on the target machine as insecure on all machines. See [this page](https://docs.docker.com/registry/insecure/) for instructions.
-2. Create the config file for `kubeadm` (save as `kubeadm-config.yml`)
+3. Create the config file for `kubeadm` (save as `kubeadm-config.yml`)
 ```yaml
 apiVersion: kubeadm.k8s.io/v1alpha1
 imageRepository: "172.16.0.25:5000"
@@ -72,22 +74,14 @@ kubernetesVersion: v1.8.0
 apiServerExtraArgs:
   feature-gates: "DevicePlugins=true"
 ```
-3. Remove the following line from `/etc/systemd/system/kubelet.service.d/kubeadm-10.conf`
-```ini
-Environment="KUBELET_NETWORK_ARGS=--network-plugin=cni --cni-conf-dir=/etc/cni/net.d --cni-bin-dir=/opt/cni/bin"
-```
-4. Add the following line in 
+4. If you did not compile Kubernetes with the _deviceplugins_ feature built-in, then add the following line in 
 `/etc/systemd/system/kubelet.service.d/kubeadm-10.conf`
 ```ini
 Environment="KUBELET_EXTRA_ARGS=--feature-gates=DevicePlugins=true"
 ```
-4. Reload `kubelet`
+5. Reload `kubelet`
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl restart kubelet
 ```
-5. Initialize the cluster
-    * Follow the instructions in [setup-kubernetes-cluster.md](setup-kubernetes-cluster.md), but add the following flag to `kubeadm init`:
-```bash
-sudo kubeadm init --config kubeadm-config.yml
-```
+6. Initialize the cluster by following the instructions in [setup-kubernetes-cluster.md](setup-kubernetes-cluster.md)
