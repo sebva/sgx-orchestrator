@@ -1,7 +1,11 @@
+import docker
+import kubernetes
 from influxdb import InfluxDBClient
 
 influx_client = InfluxDBClient("monitoring-influxdb.kube-system.svc.cluster.local", database="k8s")
-docker_client = None  # TODO Real Docker client
+docker_client = docker.from_env(version="1.24")
+kubernetes.config.load_incluster_config()
+kubernetes_client = kubernetes.client.CoreV1Api()
 
 
 def fetch_metrics():
