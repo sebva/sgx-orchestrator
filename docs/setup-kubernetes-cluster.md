@@ -85,8 +85,8 @@ sudo kubeadm init --config kubeadm-config.yml
 10. Wait for all pods to settle to a _Running_ state (observe using `kubectl get pods --all-namespaces`)
 11. Deploy Flannel to the cluster
 ```
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.8.0/Documentation/kube-flannel.yml
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.8.0/Documentation/kube-flannel-rbac.yml
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/fc5fbd7aa3be924b06e770bfb0e7f4d69d649735/Documentation/kube-flannel.yml
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/fc5fbd7aa3be924b06e770bfb0e7f4d69d649735/Documentation/kube-flannel-rbac.yml
 ```
 12. Join the nodes using the command that was written in the output of `kubeadm init`
 13. Wait for the nodes to be ready by monitoring the output of `kubectl get nodes`
