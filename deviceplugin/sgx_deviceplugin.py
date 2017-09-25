@@ -26,7 +26,7 @@ class SgxPluginService(api_pb2_grpc.DevicePluginServicer):
             time.sleep(10)
 
     def Allocate(self, request: api_pb2.AllocateRequest, context):
-        print("Allocate(%d pages)" % request)
+        print("Allocate(%d pages)" % len(request.devicesIDs))
 
         requested_ids = request.devicesIDs
 
