@@ -23,7 +23,7 @@ spec:
       - name: kubeconfig
         hostPath:
           path: /etc/kubernetes/scheduler.conf
-          type: FileOrCreate
+          type: File
       tolerations:
       - effect: NoSchedule
         operator: Exists
