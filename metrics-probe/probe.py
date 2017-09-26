@@ -1,7 +1,9 @@
+from time import sleep
 from typing import List
 
-import docker
+import docker.models.containers
 import kubernetes
+from docker.models.containers import Container
 from influxdb import InfluxDBClient
 from kubernetes.client import V1Pod, V1ContainerStatus
 
@@ -14,26 +16,27 @@ except kubernetes.config.config_exception.ConfigException:
 kubernetes_client = kubernetes.client.CoreV1Api()
 
 
-def get_all_pods_on_node(node_name=docker_client.info()["Name"]) -> List[V1Pod]:
+def get_all_pods_on_node(node_name: str = docker_client.info()["Name"]) -> List[V1Pod]:
     return kubernetes_client.list_pod_for_all_namespaces(field_selector="spec.nodeName={}".format(node_name)).items
 
 
-def get_sgx_docker_containers():
+def get_sgx_docker_containers() -> List[Container]:
     docker_containers = docker_client.containers.list()
     return [x for x in docker_containers if
+            isinstance(x.attrs['HostConfig']['Devices'], list) and
             '/dev/isgx' in map(lambda y: y['PathOnHost'], x.attrs['HostConfig']['Devices'])]
 
 
-def get_sgx_k8s_containers_in_pod(pod: V1Pod, sgx_docker_containers=get_sgx_docker_containers()) -> List[
-    V1ContainerStatus]:
-    return [x for x in pod.status.container_statuses if x.container_id[9:] in {x['Id'] for x in sgx_docker_containers}]
+def get_sgx_k8s_containers_in_pod(pod: V1Pod, sgx_docker_containers: List[Container] = get_sgx_docker_containers()) -> \
+        List[V1ContainerStatus]:
+    return [x for x in pod.status.container_statuses if x.container_id[9:] in {x.id for x in sgx_docker_containers}]
 
 
-def flatten_labels(labels: dict):
+def flatten_labels(labels: dict) -> str:
     return ','.join("{}:{}".format(key, value) for key, value in labels.items())
 
 
-def container_to_influxdb_tags(pod: V1Pod, pod_container: V1ContainerStatus):
+def container_to_influxdb_tags(pod: V1Pod, pod_container: V1ContainerStatus) -> dict:
     cluster_name = pod.metadata.cluster_name
     if cluster_name is None:
         cluster_name = "default"
@@ -80,6 +83,7 @@ def main():
                 epc_usage = 6000
                 # TODO Push to InfluxDB in batch
                 push_to_influx("sgx/epc", epc_usage, influxdb_tags)
+        sleep(30)
 
 
 if __name__ == '__main__':
