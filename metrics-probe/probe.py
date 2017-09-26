@@ -1,11 +1,14 @@
 from time import sleep
-from typing import List
+from typing import List, Tuple
 
 import docker.models.containers
 import kubernetes
+import psutil as psutil
 from docker.models.containers import Container
 from influxdb import InfluxDBClient
 from kubernetes.client import V1Pod, V1ContainerStatus
+
+import sgx
 
 influx_client = InfluxDBClient("monitoring-influxdb.kube-system.svc.cluster.local", database="k8s")
 docker_client = docker.from_env(version="1.24")
@@ -28,8 +31,14 @@ def get_sgx_docker_containers() -> List[Container]:
 
 
 def get_sgx_k8s_containers_in_pod(pod: V1Pod, sgx_docker_containers: List[Container] = get_sgx_docker_containers()) -> \
-        List[V1ContainerStatus]:
-    return [x for x in pod.status.container_statuses if x.container_id[9:] in {x.id for x in sgx_docker_containers}]
+        List[Tuple[V1ContainerStatus, Container]]:
+    result = []
+    for k8s_container in pod.status.container_statuses:
+        for docker_container in sgx_docker_containers:
+            if k8s_container.container_id[9:] == docker_container.id:
+                result.append((k8s_container, docker_container))
+
+    return result
 
 
 def flatten_labels(labels: dict) -> str:
@@ -58,7 +67,7 @@ def container_to_influxdb_tags(pod: V1Pod, pod_container: V1ContainerStatus) -> 
     }
 
 
-def push_to_influx(metric_name: str, value, labels: dict) -> bool:
+def push_to_influx(metric_name: str, value: int, labels: dict) -> bool:
     points = [
         {
             "measurement": metric_name,
@@ -71,16 +80,25 @@ def push_to_influx(metric_name: str, value, labels: dict) -> bool:
     return influx_client.write_points(points)
 
 
+def get_sgx_memory_usage(pid: int) -> int:
+    return int(sgx.sgx_stats_pid(pid)['epc_pages_cnt'] * 4096)  # 4k pages in SGX
+
+
 def main():
     while True:
         all_pods = get_all_pods_on_node()
         docker_containers = get_sgx_docker_containers()
         for pod in all_pods:
             sgx_containers = get_sgx_k8s_containers_in_pod(pod, docker_containers)
-            for sgx_container in sgx_containers:
-                influxdb_tags = container_to_influxdb_tags(pod, sgx_container)
-                # TODO Fetch EPC usage
-                epc_usage = 6000
+            for (k8s_container, docker_container) in sgx_containers:
+                influxdb_tags = container_to_influxdb_tags(pod, k8s_container)
+                parent_pid = docker_container.attrs['State']['Pid']
+
+                epc_usage = get_sgx_memory_usage(parent_pid)
+
+                for child_process in psutil.Process(parent_pid).children(recursive=True):
+                    epc_usage += get_sgx_memory_usage(child_process.pid)
+
                 # TODO Push to InfluxDB in batch
                 push_to_influx("sgx/epc", epc_usage, influxdb_tags)
         sleep(30)
