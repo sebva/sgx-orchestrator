@@ -1,30 +1,58 @@
+from typing import List
+
 import docker
 import kubernetes
 from influxdb import InfluxDBClient
+from kubernetes.client import V1Pod, V1ContainerStatus
 
 influx_client = InfluxDBClient("monitoring-influxdb.kube-system.svc.cluster.local", database="k8s")
 docker_client = docker.from_env(version="1.24")
-kubernetes.config.load_incluster_config()
+try:
+    kubernetes.config.load_incluster_config()
+except kubernetes.config.config_exception.ConfigException:
+    kubernetes.config.load_kube_config()
 kubernetes_client = kubernetes.client.CoreV1Api()
 
 
-def fetch_metrics():
-    # TODO Fill the lambdas
-    tags = [
-        ("type", lambda: 0),
-        ("pod_id", lambda: 0),
-        ("pod_name", lambda: 0),
-        ("pod_namespace", lambda: 0),
-        ("namespace_name", lambda: 0),
-        ("namespace_id", lambda: 0),
-        ("container_name", lambda: 0),
-        ("labels", lambda: 0),
-        ("nodename", lambda: 0),
-        ("hostname", lambda: 0),
-        ("resource_id", lambda: 0),
-        ("host_id", lambda: 0),
-        ("container_base_image", lambda: 0),
-    ]
+def get_all_pods_on_node(node_name=docker_client.info()["Name"]) -> List[V1Pod]:
+    return kubernetes_client.list_pod_for_all_namespaces(field_selector="spec.nodeName={}".format(node_name)).items
+
+
+def get_sgx_docker_containers():
+    docker_containers = docker_client.containers.list()
+    return [x for x in docker_containers if
+            '/dev/isgx' in map(lambda y: y['PathOnHost'], x.attrs['HostConfig']['Devices'])]
+
+
+def get_sgx_k8s_containers_in_pod(pod: V1Pod, sgx_docker_containers=get_sgx_docker_containers()) -> List[
+    V1ContainerStatus]:
+    return [x for x in pod.status.container_statuses if x.container_id[9:] in {x['Id'] for x in sgx_docker_containers}]
+
+
+def flatten_labels(labels: dict):
+    return ','.join("{}:{}".format(key, value) for key, value in labels.items())
+
+
+def container_to_influxdb_tags(pod: V1Pod, pod_container: V1ContainerStatus):
+    cluster_name = pod.metadata.cluster_name
+    if cluster_name is None:
+        cluster_name = "default"
+    return {
+        "type": "pod_container",
+        "pod_id": pod.metadata.uid,
+        "pod_name": pod.metadata.name,
+        "pod_namespace": pod.metadata.namespace,
+        "namespace_name": pod.metadata.namespace,
+        # "namespace_id": None,
+        "container_name": pod_container.name,
+        "labels": flatten_labels(pod.metadata.labels),
+        "nodename": pod.spec.node_name,
+        "hostname": pod.spec.hostname,
+        # "resource_id": None,
+        # "host_id": None,
+        "container_base_image": pod_container.image_id[18:],
+        "cluster_name": cluster_name
+    }
 
 
 def push_to_influx(metric_name: str, value, labels: dict) -> bool:
@@ -41,8 +69,17 @@ def push_to_influx(metric_name: str, value, labels: dict) -> bool:
 
 
 def main():
-    # TODO Loop: fetch, push
-    pass
+    while True:
+        all_pods = get_all_pods_on_node()
+        docker_containers = get_sgx_docker_containers()
+        for pod in all_pods:
+            sgx_containers = get_sgx_k8s_containers_in_pod(pod, docker_containers)
+            for sgx_container in sgx_containers:
+                influxdb_tags = container_to_influxdb_tags(pod, sgx_container)
+                # TODO Fetch EPC usage
+                epc_usage = 6000
+                # TODO Push to InfluxDB in batch
+                push_to_influx("sgx/epc", epc_usage, influxdb_tags)
 
 
 if __name__ == '__main__':
