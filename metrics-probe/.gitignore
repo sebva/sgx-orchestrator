@@ -177,3 +177,5 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+a.out
