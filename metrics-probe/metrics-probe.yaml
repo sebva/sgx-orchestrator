@@ -33,8 +33,14 @@ spec:
           volumeMounts:
           - mountPath: /var/run/docker.sock
             name: dockersock
+          - mountPath: /hostproc
+            name: hostproc
       volumes:
       - name: dockersock
         hostPath:
           path: /var/run/docker.sock
           type: Socket
+      - name: hostproc
+        hostPath:
+          path: /proc
+          type: Directory

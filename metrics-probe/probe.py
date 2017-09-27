@@ -3,13 +3,14 @@ from typing import List, Tuple
 
 import docker.models.containers
 import kubernetes
-import psutil as psutil
+import psutil
 from docker.models.containers import Container
 from influxdb import InfluxDBClient
 from kubernetes.client import V1Pod, V1ContainerStatus
 
 import sgx
 
+psutil.PROCFS_PATH = "/hostproc"
 influx_client = InfluxDBClient("monitoring-influxdb.kube-system.svc.cluster.local", database="k8s")
 docker_client = docker.from_env(version="1.24")
 try:
@@ -81,7 +82,7 @@ def push_to_influx(metric_name: str, value: int, labels: dict) -> bool:
 
 
 def get_sgx_memory_usage(pid: int) -> int:
-    return int(sgx.sgx_stats_pid(pid)['epc_pages_cnt'] * 4096)  # 4k pages in SGX
+    return int(sgx.sgx_stats_pid(pid)['epc_pages_cnt']) * 4096  # 4k pages in SGX
 
 
 def main():
