@@ -68,7 +68,7 @@ def container_to_influxdb_tags(pod: V1Pod, pod_container: V1ContainerStatus) -> 
     }
 
 
-def push_to_influx(metric_name: str, value: int, labels: dict) -> bool:
+def batch_push_to_influx(metrics: List[Tuple[str, int, dict]]) -> bool:
     points = [
         {
             "measurement": metric_name,
@@ -76,9 +76,13 @@ def push_to_influx(metric_name: str, value: int, labels: dict) -> bool:
                 "value": value
             },
             "tags": labels,
-        }
+        } for metric_name, value, labels in metrics
     ]
     return influx_client.write_points(points)
+
+
+def push_to_influx(metric_name: str, value: int, labels: dict) -> bool:
+    return batch_push_to_influx([(metric_name, value, labels)])
 
 
 def get_sgx_memory_usage(pid: int) -> int:
@@ -89,6 +93,7 @@ def main():
     while True:
         all_pods = get_all_pods_on_node()
         docker_containers = get_sgx_docker_containers()
+        metrics = []
         for pod in all_pods:
             sgx_containers = get_sgx_k8s_containers_in_pod(pod, docker_containers)
             for (k8s_container, docker_container) in sgx_containers:
@@ -100,8 +105,9 @@ def main():
                 for child_process in psutil.Process(parent_pid).children(recursive=True):
                     epc_usage += get_sgx_memory_usage(child_process.pid)
 
-                # TODO Push to InfluxDB in batch
-                push_to_influx("sgx/epc", epc_usage, influxdb_tags)
+                metrics.append(("sgx/epc", epc_usage, influxdb_tags,))
+        print("Pushing metrics: " + str(metrics))
+        batch_push_to_influx(metrics)
         sleep(30)
 
 
