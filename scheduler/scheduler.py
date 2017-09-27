@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import argparse
+import sys
 import time
 from datetime import datetime
 from typing import List
@@ -6,13 +8,27 @@ from typing import List
 from kubernetes import client, config
 from kubernetes.client import V1ObjectMeta, V1ObjectReference, V1Event, V1EventSource, V1Pod, V1Node, V1Binding
 
-from policy import policy_filter, policy_select
+from policy_dumb import PolicyDumb
 
 scheduler_name = "efficient"
+policy = None
+policies = {
+    "dumb": PolicyDumb
+}
 
 
 def init():
+    global policy
     config.load_kube_config()
+    parser = argparse.ArgumentParser(description='Kubernetes SGX efficient scheduler')
+    parser.add_argument('-p', '--policy', help="Set which policy to use for the scheduler", default="dumb")
+
+    args = parser.parse_args()
+    try:
+        policy = policies[args.policy]()
+    except KeyError:
+        print("The policy you specified does not exist", file=sys.stderr)
+        sys.exit(1)
 
 
 def list_unscheduled_pods() -> List[V1Pod]:
@@ -73,8 +89,8 @@ def assign_pod_to_node(pod: V1Pod, node: V1Node):
 def schedule(pods: List[V1Pod]):
     nodes = get_nodes()
     for pod in pods:
-        filtered_nodes = policy_filter(nodes, pod)
-        selected_node = policy_select(filtered_nodes, pod)
+        filtered_nodes = policy.filter(nodes, pod)
+        selected_node = policy.select(filtered_nodes, pod)
         assign_pod_to_node(pod, selected_node)
 
 

@@ -1,21 +1,17 @@
-import random
+from abc import ABC, abstractmethod
 from typing import List, Tuple
 
 from kubernetes.client import V1Pod, V1Node
 
 
-def policy_filter(nodes: List[V1Node], pod: V1Pod) -> List[V1Node]:
-    sgx_nodes, standard_nodes = separate_nodes(nodes)
-    if pod_requests_sgx(pod):
-        # TODO Filter nodes with EPC already full
-        return sgx_nodes
-    else:
-        return nodes
+class Policy(ABC):
+    @abstractmethod
+    def filter(self, nodes: List[V1Node], pod: V1Pod) -> List[V1Node]:
+        pass
 
-
-def policy_select(filtered_nodes: List[V1Node], pod: V1Pod) -> V1Node:
-    # TODO real policy
-    return random.choice(filtered_nodes)
+    @abstractmethod
+    def select(self, filtered_nodes: List[V1Node], pod: V1Pod) -> V1Node:
+        pass
 
 
 def separate_nodes(nodes: List[V1Node]) -> Tuple[List[V1Node], List[V1Node]]:
