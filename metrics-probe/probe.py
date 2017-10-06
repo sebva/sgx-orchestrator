@@ -90,8 +90,11 @@ def get_sgx_memory_usage(pid: int) -> int:
 
 
 def main():
+    print("Metrics probe started")
     while True:
+        print("Listing all pods")
         all_pods = get_all_pods_on_node()
+        print("Listing Docker containers")
         docker_containers = get_sgx_docker_containers()
         metrics = []
         for pod in all_pods:
@@ -108,6 +111,7 @@ def main():
                 metrics.append(("sgx/epc", epc_usage, influxdb_tags,))
         print("Pushing metrics: " + str(metrics))
         batch_push_to_influx(metrics)
+        print("Sleeping 30 seconds")
         sleep(30)
 
 
