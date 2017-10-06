@@ -7,4 +7,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY *.py ./
 
-CMD ["python", "-u", "./scheduler.py"]
+ENTRYPOINT ["python3", "-u", "./scheduler.py"]
