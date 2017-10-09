@@ -10,12 +10,14 @@ from kubernetes.client import V1ObjectMeta, V1ObjectReference, V1Event, V1EventS
 
 from policy_binpack import PolicyBinpack
 from policy_dumb import PolicyDumb
+from policy_spread import PolicySpread
 
 scheduler_name = "efficient"
 policy = None
 policies = {
     "dumb": PolicyDumb,
     "binpack": PolicyBinpack,
+    "spread": PolicySpread,
 }
 
 

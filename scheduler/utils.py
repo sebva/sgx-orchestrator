@@ -1,3 +1,4 @@
+import functools
 from typing import List, Tuple, Dict
 
 from influxdb import InfluxDBClient
@@ -65,3 +66,10 @@ def convert_k8s_suffix(k8s_value: str) -> float:
         if k8s_value.endswith(suffix[0]):
             return float(k8s_value[:-len(suffix[0])]) * (suffix[1] ** suffix[2])
     return float(k8s_value)
+
+
+def pod_sum_resources_requests(pod: V1Pod, metric: str):
+    return functools.reduce(
+        lambda acc, container: acc + convert_k8s_suffix(container.resources.requests[metric]),
+        pod.spec.containers, 0
+    )
