@@ -5,6 +5,8 @@ SGX            := 0
 
 SrcDir         := src
 SGX_COMMONDIR  := $(realpath ../../sgx-systems/sgx_common)
+PBCRootDir     := $(realpath ../pbc-0.5.14)
+GMPRootDir     := $(realpath ../gmp-6.1.2)
 
 SgxToken       := sgx
 NativeToken    := ntv
@@ -24,33 +26,23 @@ endif
 BinDir  := bin-$(BuildToken)
 ObjDir  := obj-$(BuildToken)
 
-SGX_SDK              := $(realpath ../../sgx-sdk)
-SGX_LIBRARY_PATH     := $(SGX_SDK)/build/linux
-SGX_ENCLAVE_SIGNER   := $(SGX_SDK)/build/linux/sgx_sign
-SGX_EDGER8R          := $(SGX_SDK)/build/linux/sgx_edger8r
-
-#SGX_SDK              := /opt/intel/sgxsdk
-#SGX_LIBRARY_PATH     := $(SGX_SDK)/lib64
-#SGX_ENCLAVE_SIGNER   := $(SGX_SDK)/bin/x64/sgx_sign
-#SGX_EDGER8R          := $(SGX_SDK)/bin/x64/sgx_edger8r
-
-IncludeSdk           := common/inc
-IncludeDirs          += $(SGX_SDK)/$(IncludeSdk)
-App_Libs             := sgx_capable
-App_Lib_Dirs         := $(SGX_LIBRARY_PATH) 
-
 ifeq ($(SGX),1)
 TRUSTEDOBJS          := $(ENCLAVENAME)_t.o enclave_dummy.o 
+SGX_SDK              := /opt/intel/sgxsdk
+SGX_LIBRARY_PATH     := $(SGX_SDK)/lib64
+SGX_ENCLAVE_SIGNER   := $(SGX_SDK)/bin/x64/sgx_sign
+SGX_EDGER8R          := $(SGX_SDK)/bin/x64/sgx_edger8r
 Trts_Library_Name    := sgx_trts
 Service_Library_Name := sgx_tservice
-App_Libs             += sgx_uae_service sgx_urts 
+App_Lib_Dirs         := $(SGX_LIBRARY_PATH) 
+App_Libs             := sgx_uae_service sgx_urts 
 CFlags               += -DENABLE_SGX
-#IncludeDirs          += $(SGX_SDK)/include
+IncludeDirs          += $(SGX_SDK)/include
 Untrusted_Objs       += 
 Untrusted_Objs       := $(filter-out $(TRUSTEDOBJS), $(Untrusted_Objs)) \
 	                    $(ENCLAVENAME)_u.o
 SGXCOMOBJS := $(addprefix $(ObjDir)/, sgx_initenclave.o sgx_errlist.o)
-Enclave_Lib_Dirs     := $(SGX_LIBRARY_PATH) $(dir $(ExtLibs)) $(SGX_SDK)/sdk/libcapable/linux/
+Enclave_Lib_Dirs     := $(SGX_LIBRARY_PATH) $(dir $(ExtLibs))
 Enclave_Libs         := 
 Enclave_SDK_Libs     := -Wl,--whole-archive \
                             -l$(Trts_Library_Name) \
@@ -73,9 +65,9 @@ Common_C_Cpp_Flags := $(CFlags) -nostdinc -fvisibility=hidden \
 Enclave_C_Flags   := -Wno-implicit-function-declaration -std=c11 \
 	                 $(Common_C_Cpp_Flags)
 Enclave_Cpp_Flags := $(Common_C_Cpp_Flags) $(CPPFlags) -nostdinc++
-Enclave_IncDirs   := $(SGX_SDK)/include/stlport $(SrcDir) \
-                     $(SGX_SDK)/$(IncludeSdk) \
-                     $(SGX_SDK)/$(IncludeSdk)/tlibc $(SGX_COMMONDIR) 
+Enclave_IncDirs   := $(SGX_SDK)/include/stlport $(SrcDir) $(SGX_SDK)/include \
+                     $(SGX_SDK)/include/tlibc $(SGX_COMMONDIR) \
+                     $(PBCRootDir)/include $(GMPDir)
 Enclave_Include   := $(addprefix -I, $(Enclave_IncDirs))
 App_Cpp_Objs      := $(SGXCOMOBJS)
 Trusted_Objects   := $(addprefix $(ObjDir)/,$(TRUSTEDOBJS))
@@ -87,7 +79,7 @@ LDFLAGS      := -static
 all: $(BinDir)/$(TARGET)
 endif
 
-IncludeDirs    += $(SrcDir) $(SGX_COMMONDIR)  
+IncludeDirs    += $(SrcDir) $(SGX_COMMONDIR) $(PBCRootDir)/include/ $(GMPDir)/
 App_Include    := $(addprefix -I, $(IncludeDirs))
 App_Link_Flags := $(addprefix -L, $(App_Lib_Dirs)) \
                   $(addprefix -l, $(App_Libs))
@@ -95,7 +87,7 @@ App_Cpp_Objs   += $(addprefix $(ObjDir)/, $(Untrusted_Objs))
 
 ############## UNTRUSTED #######################################################
 $(BinDir)/$(TARGET): ${App_Cpp_Objs} | $(BinDir)
-	${CXX} $^ -o $@ ${App_Link_Flags} ${LDFLAGS}
+	@${CXX} $^ -o $@ ${App_Link_Flags} ${LDFLAGS}
 	@echo -e "LINK (App)\t=>\t$@"
 
 $(ObjDir)/%.o : $(SrcDir)/%.c | $(ObjDir)
@@ -111,7 +103,7 @@ $(SGXCOMOBJS) : $(ObjDir)/%.o : $(SGX_COMMONDIR)/%.cpp | $(ObjDir)
 	@echo -e "CXX (App)\t<=\t$<"
 
 $(SrcDir)/$(ENCLAVENAME)_u.c : $(SrcDir)/$(ENCLAVENAME).edl $(SGX_EDGER8R)
-	@cd $(dir $@) && $(SGX_EDGER8R) --untrusted ../$< --search-path ../$(dir $<) --search-path $(SGX_SDK)/$(IncludeSdk)
+	@cd $(dir $@) && $(SGX_EDGER8R) --untrusted ../$< --search-path ../$(dir $<) --search-path $(SGX_SDK)/include
 	@echo -e "EDGER (App)\t=>\t$@"
 
 ############## TRUSTED #########################################################
@@ -124,7 +116,7 @@ $(BinDir)/$(TARGET).so : $(Trusted_Objects)
 	@echo -e "LINK (Enclave)\t=>\t$@"
 
 $(SrcDir)/$(ENCLAVENAME)_t.c : $(SrcDir)/$(ENCLAVENAME).edl $(SGX_EDGER8R)
-	@cd $(dir $@) && $(SGX_EDGER8R) --trusted ../$< --search-path ../$(dir $<) --search-path $(SGX_SDK)/$(IncludeSdk)
+	@cd $(dir $@) && $(SGX_EDGER8R) --trusted ../$< --search-path ../$(dir $<) --search-path $(SGX_SDK)/include
 	@echo -e "EDGER (Enclave)\t=>\t$@"
 
 $(ObjDir)/$(ENCLAVENAME)_t.o : $(SrcDir)/$(ENCLAVENAME)_t.c
