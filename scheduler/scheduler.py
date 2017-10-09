@@ -93,7 +93,15 @@ def schedule(pods: List[V1Pod]):
     nodes = get_nodes()
     for pod in pods:
         filtered_nodes = policy.filter(nodes, pod)
+        if filtered_nodes is None or len(filtered_nodes) <= 0:
+            print("Pod %s cannot be scheduled at this time (filter)" % pod.metadata.name)
+            continue
+
         selected_node = policy.select(filtered_nodes, pod)
+        if selected_node is None:
+            print("Pod %s cannot be scheduled at this time (select)" % pod.metadata.name)
+            continue
+
         assign_pod_to_node(pod, selected_node)
 
 
