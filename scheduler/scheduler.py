@@ -8,12 +8,14 @@ from typing import List
 from kubernetes import client, config
 from kubernetes.client import V1ObjectMeta, V1ObjectReference, V1Event, V1EventSource, V1Pod, V1Node, V1Binding
 
+from policy_binpack import PolicyBinpack
 from policy_dumb import PolicyDumb
 
 scheduler_name = "efficient"
 policy = None
 policies = {
-    "dumb": PolicyDumb
+    "dumb": PolicyDumb,
+    "binpack": PolicyBinpack,
 }
 
 
@@ -26,6 +28,7 @@ def init():
     args = parser.parse_args()
     try:
         policy = policies[args.policy]()
+        print("Using '%s' policy" % args.policy)
     except KeyError:
         print("The policy you specified does not exist", file=sys.stderr)
         sys.exit(1)
@@ -90,7 +93,15 @@ def schedule(pods: List[V1Pod]):
     nodes = get_nodes()
     for pod in pods:
         filtered_nodes = policy.filter(nodes, pod)
+        if filtered_nodes is None or len(filtered_nodes) <= 0:
+            print("Pod %s cannot be scheduled at this time (filter)" % pod.metadata.name)
+            continue
+
         selected_node = policy.select(filtered_nodes, pod)
+        if selected_node is None:
+            print("Pod %s cannot be scheduled at this time (select)" % pod.metadata.name)
+            continue
+
         assign_pod_to_node(pod, selected_node)
 
 
