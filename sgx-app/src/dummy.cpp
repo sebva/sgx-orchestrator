@@ -32,6 +32,7 @@ int main( int argc, char **argv ) {
                            argv[1],"enclave.dummy.token") < 0) {
         return -2;
     }
+    pause();
     free(ptr);
 #endif
 }
