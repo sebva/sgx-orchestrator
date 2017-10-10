@@ -35,6 +35,7 @@ def filter_sgx(nodes: List[V1Node], pod: V1Pod) -> List[V1Node]:
         try:
             node_epc_usage = epc_usage[node_name]
         except KeyError:
+            print("%s not found in sgx/epc in InfluxDB, check metrics-probe for problems" % node_name)
             node_epc_usage = 0
 
         if node_epc_usage + pod_epc < node_total_epc * overcommit_tolerance:
@@ -53,6 +54,7 @@ def filter_standard(nodes: List[V1Node], pod: V1Pod) -> List[V1Node]:
         try:
             node_memory_usage = memory_usage[node_name]
         except KeyError:
+            print("%s not found in memory/usage in InfluxDB, check heapster for problems" % node_name)
             node_memory_usage = 0.0
 
         if node_memory_usage + pod_memory < node_total_memory:  # No overcommit for standard memory
