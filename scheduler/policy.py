@@ -32,7 +32,12 @@ def filter_sgx(nodes: List[V1Node], pod: V1Pod) -> List[V1Node]:
         node_name = node.metadata.name
         node_total_epc = convert_k8s_suffix(node.status.allocatable["intel.com/sgx"])
         pod_epc = pod_sum_resources_requests(pod, "intel.com/sgx")
-        if epc_usage[node_name] + pod_epc < node_total_epc * overcommit_tolerance:
+        try:
+            node_epc_usage = epc_usage[node_name]
+        except KeyError:
+            node_epc_usage = 0
+
+        if node_epc_usage + pod_epc < node_total_epc * overcommit_tolerance:
             ret.append(node)
     return ret
 
@@ -45,6 +50,11 @@ def filter_standard(nodes: List[V1Node], pod: V1Pod) -> List[V1Node]:
         node_name = node.metadata.name
         node_total_memory = convert_k8s_suffix(node.status.allocatable["memory"])
         pod_memory = pod_sum_resources_requests(pod, "memory")
-        if memory_usage[node_name] + pod_memory < node_total_memory:  # No overcommit for standard memory
+        try:
+            node_memory_usage = memory_usage[node_name]
+        except KeyError:
+            node_memory_usage = 0.0
+
+        if node_memory_usage + pod_memory < node_total_memory:  # No overcommit for standard memory
             ret.append(node)
     return ret

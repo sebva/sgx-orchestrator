@@ -43,6 +43,11 @@ def nodes_memory_usage() -> Dict[str, float]:
 
 
 def convert_k8s_suffix(k8s_value: str) -> float:
+    try:
+        return float(k8s_value)
+    except ValueError:
+        pass
+
     suffixes = [
         ("Ki", 2, 10),
         ("Mi", 2, 20),
@@ -50,11 +55,9 @@ def convert_k8s_suffix(k8s_value: str) -> float:
         ("Ti", 2, 40),
         ("Pi", 2, 50),
         ("Ei", 2, 60),
-        ("", 2, 0),
         ("n", 10, -9),
         ("u", 10, -6),
         ("m", 10, -3),
-        ("", 10, 0),
         ("k", 10, 3),
         ("M", 10, 6),
         ("G", 10, 9),
@@ -64,7 +67,9 @@ def convert_k8s_suffix(k8s_value: str) -> float:
     ]
     for suffix in suffixes:
         if k8s_value.endswith(suffix[0]):
-            return float(k8s_value[:-len(suffix[0])]) * (suffix[1] ** suffix[2])
+            k8s_value_without_suffix = k8s_value[:-len(suffix[0])]
+            print("orig: %s, no suff: %s" % (k8s_value, k8s_value_without_suffix))
+            return float(k8s_value_without_suffix) * (suffix[1] ** suffix[2])
     return float(k8s_value)
 
 

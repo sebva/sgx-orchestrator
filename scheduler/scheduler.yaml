@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: scheduler
-          image: 172.16.0.25:5000/efficient-scheduler:1.3
+          image: 172.16.0.25:5000/efficient-scheduler:1.6
           args:
             - --policy
             - binpack
