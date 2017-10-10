@@ -12,7 +12,7 @@
 2. Compile the `.deb` packages
     1. If bazel complains about faulty checksums, the file to modify is [`build/root/WORKSPACE`](https://github.com/sebyx31/kubernetes/blob/sgx-deviceplugin/build/root/WORKSPACE)
 ```bash
-bazel build //build/debs
+bazel build //build/debs --incompatible_disallow_set_constructor=false
 ```
 3. Setup a couple environment variables
 ```bash
