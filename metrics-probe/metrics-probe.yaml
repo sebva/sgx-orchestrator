@@ -18,7 +18,7 @@ spec:
       serviceAccountName: heapster
       containers:
         - name: metrics-probe
-          image: 172.28.3.1:5000/metrics-probe:1.0
+          image: 172.28.3.1:5000/metrics-probe:1.1
           # Uncomment for debugging. Attach using kubectl attach -ti -n kube-system <pod-name>
 #          command:
 #          - python

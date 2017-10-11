@@ -33,10 +33,14 @@ def get_sgx_docker_containers() -> List[Container]:
 
 def get_sgx_k8s_containers_in_pod(pod: V1Pod, sgx_docker_containers: List[Container] = get_sgx_docker_containers()) -> \
         List[Tuple[V1ContainerStatus, Container]]:
+    container_statuses = pod.status.container_statuses
+    if container_statuses is None:
+        return []
+
     result = []
-    for k8s_container in pod.status.container_statuses:
+    for k8s_container in container_statuses:
         for docker_container in sgx_docker_containers:
-            if k8s_container.container_id[9:] == docker_container.id:
+            if k8s_container.container_id is not None and k8s_container.container_id[9:] == docker_container.id:
                 result.append((k8s_container, docker_container))
 
     return result
