@@ -34,24 +34,18 @@ docker push 127.0.0.1:5000/kube-proxy-amd64:v1.8.0
 docker pull gcr.io/google_containers/etcd-amd64:3.0.17
 docker tag gcr.io/google_containers/etcd-amd64:3.0.17 127.0.0.1:5000/etcd-amd64:3.0.17
 docker push 127.0.0.1:5000/etcd-amd64:3.0.17
-docker pull gcr.io/google_containers/k8s-dns-kube-dns-amd64:1.14.4
-docker tag gcr.io/google_containers/k8s-dns-kube-dns-amd64:1.14.4 127.0.0.1:5000/k8s-dns-kube-dns-amd64:1.14.4
-docker push 127.0.0.1:5000/k8s-dns-kube-dns-amd64:1.14.4
-docker pull gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64:1.14.4
-docker tag gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64:1.14.4 127.0.0.1:5000/k8s-dns-dnsmasq-nanny-amd64:1.14.4
-docker push 127.0.0.1:5000/k8s-dns-dnsmasq-nanny-amd64:1.14.4
-docker pull gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.4
-docker tag gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.4 127.0.0.1:5000/k8s-dns-sidecar-amd64:1.14.4
-docker push 127.0.0.1:5000/k8s-dns-sidecar-amd64:1.14.4
-docker pull gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.4
-docker tag gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.4 127.0.0.1:5000/k8s-dns-sidecar-amd64:1.14.4
-docker push 127.0.0.1:5000/k8s-dns-sidecar-amd64:1.14.4
-docker pull weaveworks/weave-npc:2.0.4
-docker tag weaveworks/weave-npc:2.0.4 127.0.0.1:5000/weaveworks/weave-npc:2.0.4
-docker push 127.0.0.1:5000/weaveworks/weave-npc:2.0.4
-docker pull weaveworks/weave-kube:2.0.4
-docker tag weaveworks/weave-kube:2.0.4 127.0.0.1:5000/weaveworks/weave-kube:2.0.4
-docker push 127.0.0.1:5000/weaveworks/weave-kube:2.0.4
+docker pull gcr.io/google_containers/k8s-dns-kube-dns-amd64:1.14.5
+docker tag gcr.io/google_containers/k8s-dns-kube-dns-amd64:1.14.5 127.0.0.1:5000/k8s-dns-kube-dns-amd64:1.14.5
+docker push 127.0.0.1:5000/k8s-dns-kube-dns-amd64:1.14.5
+docker pull gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64:1.14.5
+docker tag gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64:1.14.5 127.0.0.1:5000/k8s-dns-dnsmasq-nanny-amd64:1.14.5
+docker push 127.0.0.1:5000/k8s-dns-dnsmasq-nanny-amd64:1.14.5
+docker pull gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.5
+docker tag gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.5 127.0.0.1:5000/k8s-dns-sidecar-amd64:1.14.5
+docker push 127.0.0.1:5000/k8s-dns-sidecar-amd64:1.14.5
+docker pull gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.5
+docker tag gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.5 127.0.0.1:5000/k8s-dns-sidecar-amd64:1.14.5
+docker push 127.0.0.1:5000/k8s-dns-sidecar-amd64:1.14.5
 ```
 6. Transfer the install packages to the target machine
 ```bash
