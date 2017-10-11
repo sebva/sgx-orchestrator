@@ -115,8 +115,8 @@ def main():
                 metrics.append(("sgx/epc", epc_usage, influxdb_tags,))
         print("Pushing metrics: " + str(metrics))
         batch_push_to_influx(metrics)
-        print("Sleeping 30 seconds")
-        sleep(30)
+        print("Sleeping 7 seconds")
+        sleep(7)
 
 
 if __name__ == '__main__':

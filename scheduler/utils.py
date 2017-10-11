@@ -29,8 +29,8 @@ def pod_requests_sgx(pod: V1Pod) -> bool:
 
 def nodes_epc_usage() -> Dict[str, int]:
     results = influx_client.query(
-        'SELECT SUM(epc) AS epc FROM (SELECT MODE(value) AS epc FROM "sgx/epc" WHERE value <> 0 AND time >= now() - 3m '
-        'GROUP BY pod_name, nodename) GROUP BY nodename'
+        'SELECT SUM(epc) AS epc FROM (SELECT MAX(value) AS epc FROM "sgx/epc" WHERE value <> 0 AND time >= now() - 25s'
+        ' GROUP BY pod_name, nodename) GROUP BY nodename'
     )
     return {k[1]["nodename"]: next(v)["epc"] for k, v in results.items()}
 
