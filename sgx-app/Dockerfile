@@ -14,5 +14,4 @@ RUN ./generate_binaries.sh bin-sgx/dummy.so src/enclave_dummy.config.xml src/enc
     ./generate_binaries.sh bin-sgx/dummy.so src/enclave_dummy.config.xml src/enclave-key.pem 1000 1000 24000 > /dev/null
 
 
-ENTRYPOINT ["./dummy-entrypoint.py"]
-
+ENTRYPOINT ["python2", "-u", "./dummy-entrypoint.py"]
