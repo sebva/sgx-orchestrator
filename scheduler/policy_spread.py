@@ -1,13 +1,12 @@
+import random
+import statistics
 from typing import List, Optional, Dict, Union
 
-import statistics
-
-import sys
 from kubernetes.client import V1Node, V1Pod
 
 import utils
 from policy import Policy
-from utils import node_supports_sgx, pod_requests_sgx, pod_sum_resources_requests, separate_nodes
+from utils import pod_requests_sgx, pod_sum_resources_requests, separate_nodes
 
 
 class PolicySpread(Policy):
@@ -24,6 +23,8 @@ class PolicySpread(Policy):
             if len(standard_nodes) >= 1:  # Only allow placement on SGX nodes when there is no other choice
                 filtered_nodes = standard_nodes
             raw_usages = utils.nodes_memory_usage()
+
+        random.shuffle(filtered_nodes)  # Better fairness when nodes have the same usage
 
         base_usages = [[node.metadata.name, projected_memory_usage(node, None, raw_usages)] for node in filtered_nodes]
         best_node = filtered_nodes[0]
@@ -43,7 +44,11 @@ class PolicySpread(Policy):
 
 
 def projected_memory_usage(node: V1Node, pod: Optional[V1Pod], usage: Dict[str, Union[int, float]]) -> Union[int, float]:
-    usage = usage[node.metadata.name]
+    try:
+        usage = usage[node.metadata.name]
+    except KeyError:
+        usage = 0
+
     if pod is not None:
         usage += pod_sum_resources_requests(pod, "intel.com/sgx" if pod_requests_sgx(pod) else "memory")
     return usage
