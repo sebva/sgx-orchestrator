@@ -90,7 +90,7 @@ def push_to_influx(metric_name: str, value: int, labels: dict) -> bool:
 
 
 def get_sgx_memory_usage(pid: int) -> int:
-    return int(sgx.sgx_stats_pid(pid)['epc_pages_cnt']) * 4096  # 4k pages in SGX
+    return int(sgx.sgx_stats_pid(pid)['epc_pages_cnt'])
 
 
 def main():
