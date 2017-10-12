@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   labels:
     app: scheduler
-  name: scheduler
+  name: spread-scheduler
   namespace: kube-system
 spec:
   replicas: 1
@@ -11,14 +11,16 @@ spec:
     metadata:
       labels:
         app: scheduler
-      name: scheduler
+      name: spread-scheduler
     spec:
       containers:
         - name: scheduler
-          image: 172.28.3.1:5000/efficient-scheduler:1.6
+          image: 172.28.3.1:5000/efficient-scheduler:1.9
           args:
             - --policy
-            - binpack
+            - spread
+            - --name
+            - spread
           volumeMounts:
           - mountPath: /root/.kube/config
             name: kubeconfig

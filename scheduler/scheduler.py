@@ -12,7 +12,6 @@ from policy_binpack import PolicyBinpack
 from policy_dumb import PolicyDumb
 from policy_spread import PolicySpread
 
-scheduler_name = "efficient"
 policy = None
 policies = {
     "dumb": PolicyDumb,
@@ -21,16 +20,13 @@ policies = {
 }
 
 
-def init():
+def init(policy_str: str):
     global policy
     config.load_kube_config()
-    parser = argparse.ArgumentParser(description='Kubernetes SGX efficient scheduler')
-    parser.add_argument('-p', '--policy', help="Set which policy to use for the scheduler", default="dumb")
 
-    args = parser.parse_args()
     try:
-        policy = policies[args.policy]()
-        print("Using '%s' policy" % args.policy)
+        policy = policies[policy_str]()
+        print("Using '%s' policy" % policy_str)
     except KeyError:
         print("The policy you specified does not exist", file=sys.stderr)
         sys.exit(1)
@@ -107,10 +103,7 @@ def schedule(pods: List[V1Pod]):
         assign_pod_to_node(pod, selected_node)
 
 
-if __name__ == '__main__':
-    print("Scheduler starts")
-    init()
-    print("Scheduler started")
+def main_loop():
     try:
         while True:
             pods = list_unscheduled_pods()
@@ -118,3 +111,17 @@ if __name__ == '__main__':
             time.sleep(5)
     except KeyboardInterrupt:
         pass
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="SGX-Aware scheduler")
+    parser.add_argument("-n", "--name", help="Name of the scheduler", default="efficient", type=str)
+    parser.add_argument('-p', '--policy', help="Set which policy to use for the scheduler", default="binpack",
+                        choices=policies.keys())
+    args = parser.parse_args()
+
+    scheduler_name = args.name
+    print("Scheduler starts as '%s'" % scheduler_name)
+    init(args.policy)
+    print("Scheduler started")
+    main_loop()

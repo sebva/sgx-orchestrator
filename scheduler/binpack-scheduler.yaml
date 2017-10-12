@@ -1,0 +1,37 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: scheduler
+  name: binpack-scheduler
+  namespace: kube-system
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: scheduler
+      name: binpack-scheduler
+    spec:
+      containers:
+        - name: scheduler
+          image: 172.28.3.1:5000/efficient-scheduler:1.9
+          args:
+            - --policy
+            - binpack
+            - --name
+            - binpack
+          volumeMounts:
+          - mountPath: /root/.kube/config
+            name: kubeconfig
+            readOnly: true
+      volumes:
+      - name: kubeconfig
+        hostPath:
+          path: /etc/kubernetes/scheduler.conf
+          type: File
+      tolerations:
+      - effect: NoSchedule
+        operator: Exists
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
