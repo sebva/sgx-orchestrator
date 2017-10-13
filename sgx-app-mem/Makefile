@@ -4,7 +4,7 @@ SHELL          := /bin/bash
 SGX            := 0
 
 SrcDir         := src
-SGX_COMMONDIR  := $(realpath sgx_common)
+SGX_COMMONDIR  := $(realpath ../../sgx-systems/sgx_common)
 
 SgxToken       := sgx
 NativeToken    := ntv
@@ -64,8 +64,7 @@ Enclave_C_Flags   := -Wno-implicit-function-declaration -std=c11 \
 	                 $(Common_C_Cpp_Flags)
 Enclave_Cpp_Flags := $(Common_C_Cpp_Flags) $(CPPFlags) -nostdinc++
 Enclave_IncDirs   := $(SGX_SDK)/include/stlport $(SrcDir) $(SGX_SDK)/include \
-                     $(SGX_SDK)/include/tlibc $(SGX_COMMONDIR) \
-                     $(PBCRootDir)/include $(GMPDir)
+                     $(SGX_SDK)/include/tlibc $(SGX_COMMONDIR)
 Enclave_Include   := $(addprefix -I, $(Enclave_IncDirs))
 App_Cpp_Objs      := $(SGXCOMOBJS)
 Trusted_Objects   := $(addprefix $(ObjDir)/,$(TRUSTEDOBJS))
@@ -73,11 +72,12 @@ all: $(BinDir)/$(TARGET) $(BinDir)/$(TARGET).signed.so
 $(addprefix $(ObjDir)/,server_protocol.o $(TARGET).o): $(SrcDir)/$(ENCLAVENAME)_u.c
 $(ObjDir)/query_manager.o : $(SrcDir)/$(ENCLAVENAME)_t.c
 else
-LDFLAGS      := -static
+LDFLAGS         := -static
+App_Cpp_Objs    := $(ObjDir)/enclave_dummy.o
 all: $(BinDir)/$(TARGET)
 endif
 
-IncludeDirs    += $(SrcDir) $(SGX_COMMONDIR) $(PBCRootDir)/include/ $(GMPDir)/
+IncludeDirs    += $(SrcDir) $(SGX_COMMONDIR) 
 App_Include    := $(addprefix -I, $(IncludeDirs))
 App_Link_Flags := $(addprefix -L, $(App_Lib_Dirs)) \
                   $(addprefix -l, $(App_Libs))

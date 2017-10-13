@@ -6,7 +6,7 @@ enclave {
     };
 
     trusted {
-        public void ecall_dummy( void );
+        public void ecall_dummy( size_t p );
     };
 };
 
