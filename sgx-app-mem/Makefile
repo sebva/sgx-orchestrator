@@ -4,7 +4,7 @@ SHELL          := /bin/bash
 SGX            := 0
 
 SrcDir         := src
-SGX_COMMONDIR  := $(realpath ../../sgx-systems/sgx_common)
+SGX_COMMONDIR  := $(realpath sgx_common)
 
 SgxToken       := sgx
 NativeToken    := ntv
