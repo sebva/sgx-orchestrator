@@ -1,8 +1,9 @@
 import functools
+from collections import defaultdict
 from typing import List, Tuple, Dict
 
 from influxdb import InfluxDBClient
-from kubernetes.client import V1Node, V1Pod
+from kubernetes.client import V1Node, V1Pod, CoreV1Api
 
 influx_client = InfluxDBClient("monitoring-influxdb.kube-system.svc.cluster.local", database="k8s")
 
@@ -28,18 +29,49 @@ def pod_requests_sgx(pod: V1Pod) -> bool:
 
 
 def nodes_epc_usage() -> Dict[str, int]:
-    results = influx_client.query(
+    """
+    Fetches the EPC usage for all nodes in the cluster.
+    Takes the bigger value between measured usage and sum of requests.
+    """
+    k8s_api = CoreV1Api()
+    pods = k8s_api.list_pod_for_all_namespaces(
+        field_selector="spec.nodeName!="
+    ).items
+    nodes_pods_usage = (
+        (x.spec.node_name, pod_sum_resources_requests(x, "intel.com/sgx")) for x in pods if pod_requests_sgx(x)
+    )
+    usage_per_node = defaultdict(lambda: 0)
+    for (node_name, usage) in nodes_pods_usage:
+        usage_per_node[node_name] += usage
+
+    influx_results = influx_client.query(
         'SELECT SUM(epc) AS epc FROM (SELECT MAX(value) AS epc FROM "sgx/epc" WHERE value <> 0 AND time >= now() - 25s'
         ' GROUP BY pod_name, nodename) GROUP BY nodename'
     )
-    return {k[1]["nodename"]: next(v)["epc"] for k, v in results.items()}
+    return {k[1]["nodename"]: max(next(v)["epc"], usage_per_node[k[1]["nodename"]]) for k, v in influx_results.items()}
 
 
 def nodes_memory_usage() -> Dict[str, float]:
-    results = influx_client.query(
+    """
+    Fetches the memory usage for all nodes in the cluster.
+    Takes the bigger value between measured usage and sum of requests.
+    """
+    k8s_api = CoreV1Api()
+    pods = k8s_api.list_pod_for_all_namespaces(
+        field_selector="spec.nodeName!="
+    ).items
+    nodes_pods_usage = (
+        (x.spec.node_name, pod_sum_resources_requests(x, "memory")) for x in pods
+    )
+    usage_per_node = defaultdict(lambda: 0)
+    for (node_name, usage) in nodes_pods_usage:
+        usage_per_node[node_name] += usage
+
+    influx_results = influx_client.query(
         'SELECT MEAN(value) AS memory FROM "memory/usage" WHERE time >= now() - 3m AND type=\'node\' GROUP BY nodename'
     )
-    return {k[1]["nodename"]: next(v)["memory"] for k, v in results.items()}
+    return {k[1]["nodename"]: max(next(v)["memory"], usage_per_node[k[1]["nodename"]]) for k, v in
+            influx_results.items()}
 
 
 def convert_k8s_suffix(k8s_value: str) -> float:
@@ -76,5 +108,5 @@ def convert_k8s_suffix(k8s_value: str) -> float:
 def pod_sum_resources_requests(pod: V1Pod, metric: str):
     return functools.reduce(
         lambda acc, container: acc + convert_k8s_suffix(container.resources.requests[metric]),
-        pod.spec.containers, 0
+        filter(lambda x: metric in x.resources.requests, pod.spec.containers), 0
     )
