@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sgx-workload
+spec:
+  parallelism: 20
+  template:
+    metadata:
+      name: sgx-workload
+    spec:
+      schedulerName: spread
+      containers:
+      - name: sgx-app
+        image: 172.28.3.1:5000/sgx-app:1.1
+        args: ["-d", "120", "5000"]
+        resources:
+          requests:
+            intel.com/sgx: 5000
+          limits:
+            intel.com/sgx: 5000
+      restartPolicy: OnFailure
