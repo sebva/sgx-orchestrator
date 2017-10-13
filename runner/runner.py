@@ -13,12 +13,20 @@ api = CoreV1Api()
 scheduler_name = "binpack"
 pods = []
 
+sgx_image = "172.28.3.1:5000/sgx-app-mem:1.0"
+standard_image = "172.28.3.1:5000/standard-app-mem:1.0"
 
-def launch_sgx_pod(pod_name: str, duration: int, requested_pages: int, actual_pages: int):
+
+def launch_pod(pod_name: str, duration: int, requested_pages: int, actual_pages: int, is_sgx: bool):
     global pods
-    print("Launching a Pod that lasts %d seconds, requests %d pages and allocates %d pages" % (
-        duration, requested_pages, actual_pages
+    print("Launching a %s Pod that lasts %d seconds, requests %d pages and allocates %d pages" % (
+        "SGX" if is_sgx else "standard", duration, requested_pages, actual_pages
     ))
+
+    resource_requirements = V1ResourceRequirements(
+        limits={"intel.com/sgx": requested_pages},
+        requests={"intel.com/sgx": requested_pages}
+    ) if is_sgx else None
 
     pod = V1Pod(
         api_version="v1",
@@ -30,17 +38,10 @@ def launch_sgx_pod(pod_name: str, duration: int, requested_pages: int, actual_pa
             termination_grace_period_seconds=0,
             scheduler_name=scheduler_name,
             containers=[V1Container(
-                name="sgx-app",
-                image="172.28.3.1:5000/sgx-app:1.1",
+                name="app",
+                image=sgx_image if is_sgx else standard_image,
                 args=["-d", str(duration), str(actual_pages)],
-                resources=V1ResourceRequirements(
-                    limits={
-                        "intel.com/sgx": requested_pages
-                    },
-                    requests={
-                        "intel.com/sgx": requested_pages
-                    }
-                )
+                resources=resource_requirements
             )],
             restart_policy="OnFailure"
         )
@@ -52,6 +53,19 @@ def launch_sgx_pod(pod_name: str, duration: int, requested_pages: int, actual_pa
     except ApiException:
         print("Creating Pod failed!")
         traceback.print_exc()
+
+
+def jobs_to_execute(filename: str):
+    with open(filename) as jobs_csv:
+        for line in jobs_csv:
+            # TODO Write parser here
+            yield (
+                "398274392",  # pod_name
+                120,  # duration
+                5000,  # requested_pages
+                5500,  # actual_pages
+                True,  # is_sgx
+            )
 
 
 @atexit.register
@@ -66,7 +80,11 @@ def cleanup_pods():
 
 
 def main():
-    launch_sgx_pod("test", 30, 5000, 6000)
+    # TODO Enable when parser is ready
+    # for job in jobs_to_execute("trace/filename.txt"):
+    #     launch_pod(*job)
+
+    launch_pod("test", 30, 5000, 6000, is_sgx=False)
 
 
 if __name__ == "__main__":
