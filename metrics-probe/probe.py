@@ -47,7 +47,7 @@ def get_sgx_k8s_containers_in_pod(pod: V1Pod, sgx_docker_containers: List[Contai
 
 
 def flatten_labels(labels: dict) -> str:
-    return ','.join("{}:{}".format(key, value) for key, value in labels.items())
+    return ','.join("{}:{}".format(key, value) for key, value in labels.items()) if isinstance(labels, dict) else ""
 
 
 def container_to_influxdb_tags(pod: V1Pod, pod_container: V1ContainerStatus) -> dict:
