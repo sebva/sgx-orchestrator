@@ -3,6 +3,8 @@ import argparse
 import traceback
 
 import atexit
+
+import time
 from kubernetes import config
 from kubernetes.client import *
 from kubernetes.client.rest import ApiException
@@ -15,6 +17,11 @@ pods = []
 
 sgx_image = "172.28.3.1:5000/sgx-app-mem:1.0"
 standard_image = "172.28.3.1:5000/standard-app-mem:1.0"
+
+column_start_time = 0
+column_end_time = 1
+column_requested_memory = 3
+column_maximum_memory = 4
 
 
 def launch_pod(pod_name: str, duration: int, requested_pages: int, actual_pages: int, is_sgx: bool):
@@ -56,16 +63,48 @@ def launch_pod(pod_name: str, duration: int, requested_pages: int, actual_pages:
 
 
 def jobs_to_execute(filename: str):
+    """
+    Reads the file with the parsed trace, and yield a job description when needed
+    :param filename: File to parse
+    """
     with open(filename) as jobs_csv:
+        initial_time_trace = None
+        initial_time_real = None
+        job_id = 0
+
         for line in jobs_csv:
-            # TODO Write parser here
-            yield (
-                "398274392",  # pod_name
-                120,  # duration
-                5000,  # requested_pages
-                5500,  # actual_pages
-                True,  # is_sgx
+            # Skip one in N jobs
+            if job_id % 100 != 0:
+                job_id += 1
+                continue
+
+            split = line.split(",")
+            if initial_time_trace is None:
+                initial_time_trace = float(split[column_start_time])
+                initial_time_real = time.time()
+
+            (start_time, end_time, requested_memory, actual_memory) = (
+                float(split[column_start_time]) / 1000000,
+                float(split[column_end_time]) / 1000000,
+                float(split[column_requested_memory]),  # Fraction of memory, TODO relate to absolute number of pages
+                float(split[column_maximum_memory])  # Same as above
             )
+
+            expected_relative_time = start_time - initial_time_trace
+            actual_relative_time = time.time() - initial_time_real
+
+            while expected_relative_time > actual_relative_time:
+                time.sleep(expected_relative_time - actual_relative_time)  # Wait until it's time
+
+            yield (
+                str(job_id),  # pod_name
+                int(end_time - start_time),  # duration
+                int(requested_memory),  # requested_pages
+                int(actual_memory),  # actual_pages
+                True,  # is_sgx TODO decide when to use SGX or not
+            )
+
+            job_id += 1
 
 
 @atexit.register
@@ -79,19 +118,24 @@ def cleanup_pods():
             print("Delete failed")
 
 
-def main():
-    # TODO Enable when parser is ready
-    # for job in jobs_to_execute("trace/filename.txt"):
-    #     launch_pod(*job)
+def main(trace_file: str):
+    last_job = None
+    for job in jobs_to_execute(trace_file):
+        print("Starting job %s" % job.__repr__())
+        launch_pod(*job)
+        last_job = job
 
-    launch_pod("test", 30, 5000, 6000, is_sgx=False)
+    print("Last job started, waiting for completion")
+    time.sleep(last_job[1] * 1.5)  # Wait until the end of the experiment
+    # launch_pod("test", 30, 5000, 6000, is_sgx=False)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Experiments runner")
     parser.add_argument("-s", "--scheduler", type=str, default=scheduler_name, nargs="?",
                         help="Name of the custom scheduler to use")
+    parser.add_argument("trace", help="Trace file to use")
     args = parser.parse_args()
     scheduler_name = args.scheduler
 
-    main()
+    main(args.trace)
