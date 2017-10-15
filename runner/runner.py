@@ -79,9 +79,6 @@ def jobs_to_execute(filename: str):
                 continue
 
             split = line.split(",")
-            if initial_time_trace is None:
-                initial_time_trace = float(split[column_start_time])
-                initial_time_real = time.time()
 
             (start_time, end_time, requested_memory, actual_memory) = (
                 float(split[column_start_time]) / 1000000,
@@ -90,11 +87,16 @@ def jobs_to_execute(filename: str):
                 float(split[column_maximum_memory])  # Same as above
             )
 
+            if initial_time_trace is None:
+                initial_time_trace = start_time
+                initial_time_real = time.time()
+
             expected_relative_time = start_time - initial_time_trace
             actual_relative_time = time.time() - initial_time_real
 
             while expected_relative_time > actual_relative_time:
                 time.sleep(expected_relative_time - actual_relative_time)  # Wait until it's time
+                actual_relative_time = time.time() - initial_time_real
 
             yield (
                 str(job_id),  # pod_name
