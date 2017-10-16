@@ -3,6 +3,7 @@ import argparse
 import time
 import traceback
 
+import math
 from kubernetes import config
 from kubernetes.client import *
 from kubernetes.client.rest import ApiException
@@ -87,7 +88,7 @@ def jobs_to_execute(filename: str, skip: int=-1):
                 float(split[column_maximum_memory])
             )
 
-            if requested_memory < 1 or actual_memory < 1:
+            if math.isclose(requested_memory, 0) or math.isclose(actual_memory, 0):
                 print("Skipping job '%d' requiring 0 memory" % job_id)
                 job_id += 1
                 continue
@@ -135,7 +136,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Experiments runner")
     parser.add_argument("-s", "--scheduler", type=str, default=scheduler_name, nargs="?",
                         help="Name of the custom scheduler to use")
-    parser.add_argument("-k", "--skip", type=int, nargs="?", help="Skip every nth job")
+    parser.add_argument("-k", "--skip", default=-1, type=int, nargs="?", help="Skip every nth job")
     parser.add_argument("trace", help="Trace file to use")
     args = parser.parse_args()
     scheduler_name = args.scheduler
