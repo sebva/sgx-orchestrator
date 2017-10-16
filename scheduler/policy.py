@@ -11,6 +11,8 @@ overcommit_tolerance = 0.9  # Undercommit, as aesmd and friends occupy some EPC
 
 class Policy(ABC):
     def filter(self, nodes: List[V1Node], pod: V1Pod) -> List[V1Node]:
+        nodes = list(filter(lambda x: "node-role.kubernetes.io/master" not in x.metadata.labels, nodes))
+
         sgx_nodes, standard_nodes = separate_nodes(nodes)
         if pod_requests_sgx(pod):
             return filter_sgx(sgx_nodes, pod)
