@@ -1,10 +1,8 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3 -u
 import argparse
+import time
 import traceback
 
-import atexit
-
-import time
 from kubernetes import config
 from kubernetes.client import *
 from kubernetes.client.rest import ApiException
@@ -13,7 +11,6 @@ config.load_kube_config()
 api = CoreV1Api()
 
 scheduler_name = "binpack"
-pods = []
 
 sgx_image = "172.28.3.1:5000/sgx-app-mem:1.1"
 standard_image = "172.28.3.1:5000/standard-app-mem:1.0"
@@ -25,11 +22,6 @@ column_maximum_memory = 4
 
 
 def launch_pod(pod_name: str, duration: int, requested_pages: int, actual_pages: int, is_sgx: bool):
-    global pods
-    print("Launching a %s Pod that lasts %d seconds, requests %d pages and allocates %d pages" % (
-        "SGX" if is_sgx else "standard", duration, requested_pages, actual_pages
-    ))
-
     resource_requirements = V1ResourceRequirements(
         limits={"intel.com/sgx": requested_pages},
         requests={"intel.com/sgx": requested_pages}
@@ -56,7 +48,6 @@ def launch_pod(pod_name: str, duration: int, requested_pages: int, actual_pages:
 
     try:
         api.create_namespaced_pod("default", pod)
-        pods.append(pod)
     except ApiException:
         print("Creating Pod failed!")
         traceback.print_exc()
@@ -89,6 +80,7 @@ def jobs_to_execute(filename: str):
 
             if requested_memory < 1 or actual_memory < 1:
                 print("Skipping job '%d' requiring 0 memory" % job_id)
+                job_id += 1
                 continue
 
             if initial_time_trace is None:
@@ -113,27 +105,12 @@ def jobs_to_execute(filename: str):
             job_id += 1
 
 
-@atexit.register
-def cleanup_pods():
-    for p in pods:
-        pod_name = p.metadata.name
-        print("Deleting %s" % pod_name)
-        try:
-            api.delete_namespaced_pod(pod_name, "default", V1DeleteOptions())
-        except ApiException:
-            print("Delete failed")
-
-
 def main(trace_file: str):
-    last_job = None
     for job in jobs_to_execute(trace_file):
-        print("Starting job %s" % job.__repr__())
+        print("%f Starting job %s" % (time.time(), job.__repr__()))
         launch_pod(*job)
-        last_job = job
-
-    print("Last job started, waiting for completion")
-    time.sleep(last_job[1] * 1.5)  # Wait until the end of the experiment
-    # launch_pod("test", 30, 5000, 6000, is_sgx=False)
+    print("End of experiment. Gather the results, and only after may you clean finished pods.")
+    print("kubectl get pod --show-all | grep experiment | cut -d' ' -f 1 | xargs kubectl delete pod")
 
 
 if __name__ == "__main__":
