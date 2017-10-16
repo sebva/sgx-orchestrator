@@ -22,7 +22,7 @@ closest_size = min(available_sizes, key=lambda x: abs(x - requested_size))
 
 print("Using %d as size closest to %d" % (closest_size, requested_size))
 
-sgx_process = subprocess.Popen(("/entrypoint.sh", "./bin-sgx/dummy", "dummy.so.%d.signed" % closest_size))
+sgx_process = subprocess.Popen(("/entrypoint.sh", "./bin-sgx/dummy", "dummy.so-%d.signed" % closest_size))
 if args.duration is not None:
   try:
       time.sleep(args.duration)

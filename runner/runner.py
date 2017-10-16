@@ -15,7 +15,7 @@ api = CoreV1Api()
 scheduler_name = "binpack"
 pods = []
 
-sgx_image = "172.28.3.1:5000/sgx-app-mem:1.0"
+sgx_image = "172.28.3.1:5000/sgx-app-mem:1.1"
 standard_image = "172.28.3.1:5000/standard-app-mem:1.0"
 
 column_start_time = 0
