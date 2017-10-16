@@ -108,5 +108,5 @@ def convert_k8s_suffix(k8s_value: str) -> float:
 def pod_sum_resources_requests(pod: V1Pod, metric: str):
     return functools.reduce(
         lambda acc, container: acc + convert_k8s_suffix(container.resources.requests[metric]),
-        filter(lambda x: metric in x.resources.requests, pod.spec.containers), 0
+        filter(lambda x: x.resources.requests is not None and metric in x.resources.requests, pod.spec.containers), 0
     )

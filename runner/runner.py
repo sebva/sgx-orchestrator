@@ -33,7 +33,10 @@ def launch_pod(pod_name: str, duration: int, requested_pages: int, actual_pages:
     resource_requirements = V1ResourceRequirements(
         limits={"intel.com/sgx": requested_pages},
         requests={"intel.com/sgx": requested_pages}
-    ) if is_sgx else None
+    ) if is_sgx else V1ResourceRequirements(
+        requests={"memory": requested_pages * 4096}
+        # Do not set limits, otherwise Kubernetes will kill the pod if it gets exceeded
+    )
 
     pod = V1Pod(
         api_version="v1",
