@@ -87,6 +87,10 @@ def jobs_to_execute(filename: str):
                 float(split[column_maximum_memory])  # Same as above
             )
 
+            if requested_memory < 1 or actual_memory < 1:
+                print("Skipping job '%d' requiring 0 memory" % job_id)
+                continue
+
             if initial_time_trace is None:
                 initial_time_trace = start_time
                 initial_time_real = time.time()
