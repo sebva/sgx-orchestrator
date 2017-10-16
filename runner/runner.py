@@ -53,10 +53,11 @@ def launch_pod(pod_name: str, duration: int, requested_pages: int, actual_pages:
         traceback.print_exc()
 
 
-def jobs_to_execute(filename: str):
+def jobs_to_execute(filename: str, skip: int=-1):
     """
     Reads the file with the parsed trace, and yield a job description when needed
     :param filename: File to parse
+    :param skip: Only parser every nth job in the trace (negative value to disable)
     """
     with open(filename) as jobs_csv:
         initial_time_trace = None
@@ -65,7 +66,7 @@ def jobs_to_execute(filename: str):
 
         for line in jobs_csv:
             # Skip one in N jobs
-            if job_id % 100 != 0:
+            if skip > 1 and job_id % skip != 0:
                 job_id += 1
                 continue
 
@@ -105,8 +106,8 @@ def jobs_to_execute(filename: str):
             job_id += 1
 
 
-def main(trace_file: str):
-    for job in jobs_to_execute(trace_file):
+def main(trace_file: str, skip: int=-1):
+    for job in jobs_to_execute(trace_file, skip):
         print("%f Starting job %s" % (time.time(), job.__repr__()))
         launch_pod(*job)
     print("End of experiment. Gather the results, and only after may you clean finished pods.")
@@ -117,8 +118,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Experiments runner")
     parser.add_argument("-s", "--scheduler", type=str, default=scheduler_name, nargs="?",
                         help="Name of the custom scheduler to use")
+    parser.add_argument("-k", "--skip", type=int, nargs="?", help="Skip every nth job")
     parser.add_argument("trace", help="Trace file to use")
     args = parser.parse_args()
     scheduler_name = args.scheduler
 
-    main(args.trace)
+    main(args.trace, args.skip)
