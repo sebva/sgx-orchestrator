@@ -15,10 +15,17 @@ scheduler_name = "binpack"
 sgx_image = "172.28.3.1:5000/sgx-app-mem:1.1"
 standard_image = "172.28.3.1:5000/standard-app-mem:1.0"
 
+epc_size_pages = 23936
+memory_size_bytes = 16.0 * (2 ** 30)
+
 column_start_time = 0
 column_end_time = 1
 column_requested_memory = 3
 column_maximum_memory = 4
+
+
+def is_job_sgx(nth: int) -> bool:
+    return nth % 2 == 0
 
 
 def launch_pod(pod_name: str, duration: int, requested_pages: int, actual_pages: int, is_sgx: bool):
@@ -62,7 +69,8 @@ def jobs_to_execute(filename: str, skip: int=-1):
     with open(filename) as jobs_csv:
         initial_time_trace = None
         initial_time_real = None
-        job_id = 0
+        job_id = 0  # Always incremented
+        nth_job = 0  # Only incremented after a job is actually started
 
         for line in jobs_csv:
             # Skip one in N jobs
@@ -75,14 +83,22 @@ def jobs_to_execute(filename: str, skip: int=-1):
             (start_time, end_time, requested_memory, actual_memory) = (
                 float(split[column_start_time]) / 1000000,
                 float(split[column_end_time]) / 1000000,
-                float(split[column_requested_memory]) * 98041856 / 4096,  # Conversion to EPC pages, TODO generalize to standard memory
-                float(split[column_maximum_memory]) * 98041856 / 4096  # Same as above
+                float(split[column_requested_memory]),
+                float(split[column_maximum_memory])
             )
 
             if requested_memory < 1 or actual_memory < 1:
                 print("Skipping job '%d' requiring 0 memory" % job_id)
                 job_id += 1
                 continue
+
+            is_sgx = is_job_sgx(nth_job)
+            if is_sgx:
+                requested_memory *= epc_size_pages
+                actual_memory *= epc_size_pages
+            else:
+                requested_memory *= memory_size_bytes / 4096
+                actual_memory *= memory_size_bytes / 4096
 
             if initial_time_trace is None:
                 initial_time_trace = start_time
@@ -100,9 +116,10 @@ def jobs_to_execute(filename: str, skip: int=-1):
                 int(end_time - start_time),  # duration
                 int(requested_memory),  # requested_pages
                 int(actual_memory),  # actual_pages
-                True,  # is_sgx TODO decide when to use SGX or not
+                is_sgx,  # is_sgx
             )
 
+            nth_job += 1
             job_id += 1
 
 
