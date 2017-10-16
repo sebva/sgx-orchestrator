@@ -83,8 +83,8 @@ def jobs_to_execute(filename: str):
             (start_time, end_time, requested_memory, actual_memory) = (
                 float(split[column_start_time]) / 1000000,
                 float(split[column_end_time]) / 1000000,
-                float(split[column_requested_memory]),  # Fraction of memory, TODO relate to absolute number of pages
-                float(split[column_maximum_memory])  # Same as above
+                float(split[column_requested_memory]) * 98041856 / 4096,  # Conversion to EPC pages, TODO generalize to standard memory
+                float(split[column_maximum_memory]) * 98041856 / 4096  # Same as above
             )
 
             if requested_memory < 1 or actual_memory < 1:
