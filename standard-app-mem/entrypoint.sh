@@ -26,7 +26,7 @@ if [ -z "$1" ]; then
   exit 0
 fi
 
-bytes=$(("$1" * 4096))
+bytes=$(("$1" * 256))  # 4096 / 16, to enable up to 64 GB
 
-exec stress-ng --vm-bytes ${bytes} --vm-keep --vm 1 --vm-rw 1 -t ${duration}
+exec stress-ng --vm-bytes ${bytes} --vm-keep --vm 16 --vm-rw 1 -t ${duration}
 

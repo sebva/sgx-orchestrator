@@ -14,7 +14,7 @@ api = CoreV1Api()
 scheduler_name = "binpack"
 
 sgx_image = "172.28.3.1:5000/sgx-app-mem:1.1"
-standard_image = "172.28.3.1:5000/standard-app-mem:1.0"
+standard_image = "172.28.3.1:5000/standard-app-mem:1.1"
 
 epc_size_pages = 23936
 memory_size_bytes = 64.0 * (2 ** 30)
