@@ -51,7 +51,8 @@ if __name__ == '__main__':
                 ))
                 intermediate_file = "rawrunner_%s_%s_%f.txt" % (filename_time, scheduler, sgx_fraction)
 
-                runner.main(args.trace, args.skip, intermediate_file)
+                with open(intermediate_file, "w") as f:
+                    runner.main(args.trace, args.skip, f)
                 print("Runner finished, waiting for all pods to finish...")
 
                 while True:
