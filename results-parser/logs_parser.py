@@ -51,7 +51,7 @@ def parse_runner_output(fp):
                 print("Error with %s" % job_id, file=sys.stderr)
 
 
-def main(filename: str):
+def main(filename_in: str, filename_out=None):
     # May or may not be needed, as the info can be retrieved from Kubernetes after the run is complete:
     # with open("results/kube-events-2017-10-16-0057.json") as fp:
     #     for extracted in load_multiple_json(fp):
@@ -59,10 +59,16 @@ def main(filename: str):
 
     print("job_id,duration,requested_pages,actual_pages,is_sgx,runner_start_time,k8s_created_time"
           ",k8s_actual_start_time,k8s_actual_end_time")
+    output = None
 
-    with open(filename) as fp:
-        for item in parse_runner_output(fp):
-            print(",".join(str(x) for x in item))
+    try:
+        output = open(filename_out, "w") if filename_out is not None else sys.stdout
+        with open(filename_in) as fp_in:
+            for item in parse_runner_output(fp_in):
+                print(",".join(str(x) for x in item), file=output)
+    finally:
+        if filename_out is not None and output is not None:
+            output.close()
 
 
 if __name__ == '__main__':
