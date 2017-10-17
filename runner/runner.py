@@ -1,17 +1,20 @@
 #!/usr/bin/python3 -u
 import argparse
+import math
+import random
 import time
 import traceback
 
-import math
 from kubernetes import config
 from kubernetes.client import *
 from kubernetes.client.rest import ApiException
 
 config.load_kube_config()
 api = CoreV1Api()
+random.seed(792283085)
 
 scheduler_name = "binpack"
+proportion_sgx = 0
 
 sgx_image = "172.28.3.1:5000/sgx-app-mem:1.1"
 standard_image = "172.28.3.1:5000/standard-app-mem:1.1"
@@ -26,7 +29,7 @@ column_maximum_memory = 4
 
 
 def is_job_sgx(nth: int) -> bool:
-    return nth % 2 == 0
+    return random.random() < proportion_sgx
 
 
 def launch_pod(pod_name: str, duration: int, requested_pages: int, actual_pages: int, is_sgx: bool):
@@ -64,7 +67,7 @@ def launch_pod(pod_name: str, duration: int, requested_pages: int, actual_pages:
         traceback.print_exc()
 
 
-def jobs_to_execute(filename: str, skip: int=-1):
+def jobs_to_execute(filename: str, skip: int = -1):
     """
     Reads the file with the parsed trace, and yield a job description when needed
     :param filename: File to parse
@@ -127,7 +130,7 @@ def jobs_to_execute(filename: str, skip: int=-1):
             job_id += 1
 
 
-def main(trace_file: str, skip: int=-1):
+def main(trace_file: str, skip: int = -1):
     for job in jobs_to_execute(trace_file, skip):
         print("%f Starting job %s" % (time.time(), job.__repr__()))
         launch_pod(*job)
@@ -140,8 +143,11 @@ if __name__ == "__main__":
     parser.add_argument("-s", "--scheduler", type=str, default=scheduler_name, nargs="?",
                         help="Name of the custom scheduler to use")
     parser.add_argument("-k", "--skip", default=-1, type=int, nargs="?", help="Skip every nth job")
+    parser.add_argument("-x", "--sgx", default=0, type=float, nargs="?",
+                        help="Proportion of SGX jobs between 0 (no SGX) and 1 (all SGX)")
     parser.add_argument("trace", help="Trace file to use")
     args = parser.parse_args()
     scheduler_name = args.scheduler
+    proportion_sgx = args.sgx
 
     main(args.trace, args.skip)
