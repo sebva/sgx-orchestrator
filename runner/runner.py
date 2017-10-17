@@ -130,8 +130,10 @@ def jobs_to_execute(filename: str, skip: int = -1):
             job_id += 1
 
 
-def main(trace_file: str, skip: int = -1):
+def main(trace_file: str, skip: int = -1, output=None):
     for job in jobs_to_execute(trace_file, skip):
+        if output is not None:
+            print("%f Starting job %s" % (time.time(), job.__repr__()), file=output)
         print("%f Starting job %s" % (time.time(), job.__repr__()))
         launch_pod(*job)
     print("End of experiment. Gather the results, and only after may you clean finished pods.")
@@ -145,9 +147,10 @@ if __name__ == "__main__":
     parser.add_argument("-k", "--skip", default=-1, type=int, nargs="?", help="Skip every nth job")
     parser.add_argument("-x", "--sgx", default=0, type=float, nargs="?",
                         help="Proportion of SGX jobs between 0 (no SGX) and 1 (all SGX)")
+    parser.add_argument("-o", "--output", type=str, nargs="?", help="Also output prints to file")
     parser.add_argument("trace", help="Trace file to use")
     args = parser.parse_args()
     scheduler_name = args.scheduler
     proportion_sgx = args.sgx
 
-    main(args.trace, args.skip)
+    main(args.trace, args.skip, open(args.output, "w") if args.output is not None else None)
