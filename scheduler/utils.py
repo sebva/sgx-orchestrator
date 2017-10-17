@@ -35,7 +35,7 @@ def nodes_epc_usage() -> Dict[str, int]:
     """
     k8s_api = CoreV1Api()
     pods = k8s_api.list_pod_for_all_namespaces(
-        field_selector="spec.nodeName!="
+        field_selector="spec.nodeName!=,status.phase==Running"
     ).items
     nodes_pods_usage = (
         (x.spec.node_name, pod_sum_resources_requests(x, "intel.com/sgx")) for x in pods if pod_requests_sgx(x)
@@ -58,7 +58,7 @@ def nodes_memory_usage() -> Dict[str, float]:
     """
     k8s_api = CoreV1Api()
     pods = k8s_api.list_pod_for_all_namespaces(
-        field_selector="spec.nodeName!="
+        field_selector="spec.nodeName!=,status.phase==Running"
     ).items
     nodes_pods_usage = (
         (x.spec.node_name, pod_sum_resources_requests(x, "memory")) for x in pods
@@ -68,7 +68,7 @@ def nodes_memory_usage() -> Dict[str, float]:
         usage_per_node[node_name] += usage
 
     influx_results = influx_client.query(
-        'SELECT MEAN(value) AS memory FROM "memory/usage" WHERE time >= now() - 3m AND type=\'node\' GROUP BY nodename'
+        'SELECT MEAN(value) AS memory FROM "memory/usage" WHERE time >= now() - 1m AND type=\'node\' GROUP BY nodename'
     )
     return {k[1]["nodename"]: max(next(v)["memory"], usage_per_node[k[1]["nodename"]]) for k, v in
             influx_results.items()}
@@ -100,7 +100,6 @@ def convert_k8s_suffix(k8s_value: str) -> float:
     for suffix in suffixes:
         if k8s_value.endswith(suffix[0]):
             k8s_value_without_suffix = k8s_value[:-len(suffix[0])]
-            print("orig: %s, no suff: %s" % (k8s_value, k8s_value_without_suffix))
             return float(k8s_value_without_suffix) * (suffix[1] ** suffix[2])
     return float(k8s_value)
 

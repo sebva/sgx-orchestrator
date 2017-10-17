@@ -59,6 +59,10 @@ def filter_standard(nodes: List[V1Node], pod: V1Pod) -> List[V1Node]:
             print("%s not found in memory/usage in InfluxDB, check heapster for problems" % node_name)
             node_memory_usage = 0.0
 
+        print("filter: node %s; total_mem: %f; pod_mem: %f; node_mem: %f; would be: %f" % (
+            node_name, node_total_memory, pod_memory, node_memory_usage, node_memory_usage + pod_memory
+        ))
+
         if node_memory_usage + pod_memory < node_total_memory:  # No overcommit for standard memory
             ret.append(node)
     return ret
