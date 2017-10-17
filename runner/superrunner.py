@@ -3,6 +3,7 @@ import argparse
 import os
 import sys
 import time
+import traceback
 from typing import List
 
 sys.path.insert(1, os.path.join(sys.path[0], '../results-parser'))
@@ -69,6 +70,7 @@ if __name__ == '__main__':
                 clean_experiment_pods()
                 print("SR job ends")
             except:  # Gotta Catch 'Em All!
+                traceback.print_exc()
                 print("SR JOB HAS CRASHED! Continuing...")
 
     print("--- SUPER RUNNER END ---")
