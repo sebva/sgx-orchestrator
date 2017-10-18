@@ -108,9 +108,11 @@ def main():
                 parent_pid = docker_container.attrs['State']['Pid']
 
                 epc_usage = get_sgx_memory_usage(parent_pid)
-
-                for child_process in psutil.Process(parent_pid).children(recursive=True):
-                    epc_usage += get_sgx_memory_usage(child_process.pid)
+                try:
+                    for child_process in psutil.Process(parent_pid).children(recursive=True):
+                        epc_usage += get_sgx_memory_usage(child_process.pid)
+                except psutil.NoSuchProcess:
+                    print("NoSuchProcess")
 
                 metrics.append(("sgx/epc", epc_usage, influxdb_tags,))
         print("Pushing metrics: " + str(metrics))
