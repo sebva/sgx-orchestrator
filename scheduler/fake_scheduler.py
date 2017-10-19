@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 import argparse as argparse
 import math
+import policy_binpack
+
+import itertools
 
 jobs = []
 jobs_by_start_time = []
@@ -20,14 +23,13 @@ def parse_trace(jobs_csv, skip: int):
 
     job_id = 0  # Always incremented
 
-    for line in jobs_csv:
+    for line in (x.rstrip() for x in jobs_csv):
         # Skip one in N jobs
         if skip > 1 and job_id % skip != 0:
             job_id += 1
             continue
 
         split = line.split(",")
-        print(split)
 
         job = (
             float(split[column_start_time]) / 1000000,
@@ -44,12 +46,12 @@ def parse_trace(jobs_csv, skip: int):
         if initial_time_trace is None:
             initial_time_trace = job[0]
 
-        jobs.append(job)
+        jobs.append((job_id,) + job)
 
         job_id += 1
 
-    jobs_by_start_time = sorted(jobs, key=lambda x: x[0])
-    jobs_by_end_time = sorted(jobs, key=lambda x: x[1])
+    jobs_by_start_time = sorted(jobs, key=lambda x: x[1])
+    jobs_by_end_time = sorted(jobs, key=lambda x: x[2])
 
 
 def replay_trace():
@@ -60,12 +62,20 @@ def replay_trace():
     while index_start < len(jobs_by_start_time) or index_end < len(jobs_by_end_time):
         created = []
         ended = []
-        while jobs_by_start_time[index_start][0] <= current_time:
-            created.append(jobs_by_start_time[index_start])
-            index_start += 1
-        while jobs_by_end_time[index_end][1] <= current_time:
-            ended.append(jobs_by_end_time[index_end])
-            index_end += 1
+        try:
+            while jobs_by_start_time[index_start][1] <= current_time:
+                created.append(jobs_by_start_time[index_start])
+                index_start += 1
+        except IndexError:
+            pass
+
+        try:
+            while jobs_by_end_time[index_end][2] <= current_time:
+                ended.append(jobs_by_end_time[index_end])
+                index_end += 1
+        except IndexError:
+            pass
+
         yield created, ended
         current_time += 1
 
@@ -73,7 +83,9 @@ def replay_trace():
 def main(trace: str, skip: int):
     with open(trace) as fp:
         parse_trace(fp, skip)
-    for time, created, ended in zip(range(0), replay_trace()):
+
+    policy = policy_binpack.PolicyBinpack()
+    for time, (created, ended) in zip(itertools.count(), replay_trace()):
         print(time, created, ended)
 
 
