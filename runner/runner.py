@@ -20,7 +20,7 @@ sgx_image = "172.28.3.1:5000/sgx-app-mem:1.1"
 standard_image = "172.28.3.1:5000/standard-app-mem:1.1"
 
 epc_size_pages = 23936
-memory_size_bytes = 64.0 * (2 ** 30)
+memory_size_bytes = 32.0 * (2 ** 30)
 
 column_start_time = 0
 column_end_time = 1
