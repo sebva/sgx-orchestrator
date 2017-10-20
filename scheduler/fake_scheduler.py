@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse as argparse
 import math
+import sys
 from collections import defaultdict
 from functools import reduce
 from typing import Tuple, Dict
@@ -124,17 +125,19 @@ def main(trace: str, skip: int):
             else:
                 i += 1
 
-        print(time, reduce(lambda acc, elem: acc + elem[job_column_requested_memory], jobs_backlog, 0), sep=",")
+        print(time / 60.0, reduce(lambda acc, elem: acc + elem[job_column_requested_memory], jobs_backlog, 0) * 4096, sep=",")
         time += 1
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("-e", "--epc", type=int, help="Size of the EPC in pages", default=23936)
+    parser.add_argument("-e", "--epc", type=int, help="Size of the EPC in MiB", default=128)
     parser.add_argument("skip", type=int)
     parser.add_argument("trace")
     args = parser.parse_args()
 
-    real_epc_pages = args.epc
+    # Formula to compute the amount of usable pages
+    real_epc_pages = ((args.epc * 1024 * 1024 * 3 / 4) - 2621440) / 4096
+    print("%d MiB -> %d pages" % (args.epc, real_epc_pages), file=sys.stderr)
 
     main(args.trace, args.skip)
