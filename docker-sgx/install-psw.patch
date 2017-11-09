@@ -1,20 +1,23 @@
 diff --git a/linux/installer/bin/install-sgx-psw.bin.tmpl b/linux/installer/bin/install-sgx-psw.bin.tmpl
-index f06cd53..fb0365b 100755
+index 10a8952..405a4cb 100755
 --- a/linux/installer/bin/install-sgx-psw.bin.tmpl
 +++ b/linux/installer/bin/install-sgx-psw.bin.tmpl
-@@ -30,28 +30,10 @@
+@@ -30,31 +30,10 @@
  #
  #
  
--modinfo isgx &> /dev/null
+-grep intel_sgx /lib/modules/$(uname -r)/modules.builtin &> /dev/null
 -if [[ $? != "0" ]]; then
--    lsmod | grep isgx &> /dev/null
--    if [[ $? = "0" ]]; then
--        echo "Warning: You did not follow the document to install the driver package"
--        echo
--    else
--        echo "Please install the driver package before the PSW package"
--        exit 4
+-    modinfo isgx &> /dev/null
+-    if [[ $? != "0" ]]; then
+-        lsmod | grep isgx &> /dev/null
+-        if [[ $? = "0" ]]; then
+-            echo "Warning: You did not follow the document to install the driver package"
+-            echo
+-        else
+-            echo "Please install the driver package before the PSW package"
+-            exit 4
+-        fi
 -    fi
 -fi
 -
@@ -29,5 +32,5 @@ index f06cd53..fb0365b 100755
 -
 -
  PKG_ARCH=@arch@
- ARCH=$(arch)
+ ARCH=$(uname -m)
  
