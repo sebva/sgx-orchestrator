@@ -61,6 +61,10 @@ adduser ubuntu
 usermod -a -G docker ubuntu
 usermod -a -G sudo ubuntu
 ```
+6. **Allow traffic between hosts**
+```
+sudo iptables -P FORWARD ACCEPT
+```
 
 ## Instantiate the cluster
 
