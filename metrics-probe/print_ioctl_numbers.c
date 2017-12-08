@@ -12,6 +12,8 @@
 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
 #define SGX_IOC_EPC_USAGE \
 	_IOR(SGX_MAGIC, 0x03, struct sgx_enclave_usage)
+#define SGX_IOC_ENCLAVE_LIMIT \
+	_IOW(SGX_MAGIC, 0x04, struct sgx_enclave_limit)
 
 /**
  * struct sgx_enclave_create - parameter structure for the
@@ -65,10 +67,16 @@ struct sgx_enclave_usage {
     __u64 va_pages_cnt; // out
 } __attribute((packed));
 
+struct sgx_enclave_limit {
+    char cgroup_path[200];
+    unsigned int max_pages;
+} __attribute((packed));
+
 int main(int argc, char** argv) {
     printf("SGX_IOC_ENCLAVE_CREATE = %lld\n", SGX_IOC_ENCLAVE_CREATE);
     printf("SGX_IOC_ENCLAVE_ADD_PAGE = %lld\n", SGX_IOC_ENCLAVE_ADD_PAGE);
     printf("SGX_IOC_ENCLAVE_INIT = %lld\n", SGX_IOC_ENCLAVE_INIT);
     printf("SGX_IOC_EPC_USAGE = %lld\n", SGX_IOC_EPC_USAGE);
+    printf("SGX_IOC_ENCLAVE_LIMIT = %lld\n", SGX_IOC_ENCLAVE_LIMIT);
     return 0;
 }
