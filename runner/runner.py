@@ -15,6 +15,7 @@ random.seed(792283085)
 
 scheduler_name = "binpack"
 proportion_sgx = 0
+memory_fraction_attacked = 0.0
 
 sgx_image = "172.28.3.1:5000/sgx-app-mem:1.1"
 standard_image = "172.28.3.1:5000/standard-app-mem:1.1"
@@ -131,6 +132,11 @@ def jobs_to_execute(filename: str, skip: int = -1):
 
 
 def main(trace_file: str, skip: int = -1, output=None):
+    if not math.isclose(memory_fraction_attacked, 0):
+        print("%f Starting attacker pods")
+        for i in range(2):  # Number of machines, hardcoded...
+            launch_pod("attacker-%d" % i, 18000, 1, int(epc_size_pages * memory_fraction_attacked), True)
+
     for job in jobs_to_execute(trace_file, skip):
         if output is not None:
             print("%f Starting job %s" % (time.time(), job.__repr__()), file=output)
