@@ -24,11 +24,18 @@ print("Using %d as size closest to %d" % (closest_size, requested_size))
 
 sgx_process = subprocess.Popen(("/entrypoint.sh", "./bin-sgx/dummy", "dummy.so-%d.signed" % closest_size))
 if args.duration is not None:
-  try:
-      time.sleep(args.duration)
-  except KeyboardInterrupt:
-      pass
+    time_left = args.duration
+    power = 1
+    try:
+        while time_left > 0 and sgx_process.poll() is None:
+            time.sleep(power)
+            time_left -= power
+            power *= 2
+            if power > time_left:
+                power = time_left
+    except KeyboardInterrupt:
+        pass
 
-print("Killing SGX process")
-sgx_process.kill()
-
+if sgx_process.poll() is None:
+    print("Killing SGX process")
+    sgx_process.kill()
