@@ -17,8 +17,8 @@ scheduler_name = "binpack"
 proportion_sgx = 0
 memory_fraction_attacked = 0.0
 
-sgx_image = "172.28.3.1:5000/sgx-app-mem:1.1"
-standard_image = "172.28.3.1:5000/standard-app-mem:1.1"
+sgx_image = "eiger-1.maas:5000/sgx-app-mem:1.2"
+standard_image = "eiger-1.maas:5000/standard-app-mem:1.2"
 
 epc_size_pages = 23936
 memory_size_bytes = 32.0 * (2 ** 30)
