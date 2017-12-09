@@ -133,7 +133,9 @@ def jobs_to_execute(filename: str, skip: int = -1):
 
 def main(trace_file: str, skip: int = -1, output=None):
     if not math.isclose(memory_fraction_attacked, 0):
-        print("%f Starting attacker pods")
+        print("%f Starting attacker pods" % time.time())
+        if output is not None:
+            print("%f Starting attacker pods" % time.time(), file=output)
         for i in range(2):  # Number of machines, hardcoded...
             launch_pod("attacker-%d" % i, 18000, 1, int(epc_size_pages * memory_fraction_attacked), True)
 
