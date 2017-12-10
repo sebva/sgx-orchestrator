@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: scheduler
-          image: 172.28.3.1:5000/efficient-scheduler:2.9
+          image: eiger-1.maas:5000/efficient-scheduler:2.9
           args:
             - --policy
             - spread
