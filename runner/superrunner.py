@@ -16,7 +16,7 @@ import runner
 
 def running_experiment_pods(include_attacker=False) -> List[V1Pod]:
     return [x for x in runner.api.list_namespaced_pod("default").items if
-            x.metadata.name.startswith("experiment-") or (include_attacker and x.metadata.name.startswith("attacker-"))
+            x.metadata.name.startswith("experiment-") and (include_attacker or ("attacker" not in x.metadata.name))
             ]
 
 
@@ -73,7 +73,7 @@ if __name__ == '__main__':
                             break
 
                     print("Finished, now parsing logs")
-                    output_file = "runner_%s_%s_%f.txt" % (filename_time, scheduler, sgx_fraction)
+                    output_file = "runner_%s_%s_%f_%f.txt" % (filename_time, scheduler, sgx_fraction, attacker_fraction)
                     print("Output is: " + output_file)
                     logs_parser.main(intermediate_file, output_file)
                     print("Parsing finished, cleaning up...")
