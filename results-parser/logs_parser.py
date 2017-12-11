@@ -5,6 +5,7 @@ import json
 import re
 import sys
 import time
+import traceback
 
 import kubernetes
 from kubernetes.client import V1Pod, CoreV1Api
@@ -49,6 +50,7 @@ def parse_runner_output(fp):
                        k8s_created_time, k8s_actual_start_time, k8s_actual_end_time)
             except:
                 print("Error with %s" % job_id, file=sys.stderr)
+                traceback.print_exc()
 
 
 def main(filename_in: str, filename_out=None):
