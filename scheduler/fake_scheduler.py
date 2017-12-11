@@ -46,6 +46,11 @@ def parse_trace(jobs_csv, skip: int):
             math.ceil(float(split[trace_column_maximum_memory]) * 23936),
         )
 
+        if max(job[2], job[3]) > real_epc_pages:
+            print("Job cannot fit in EPC, skipped", file=sys.stderr)
+            job_id += 1
+            continue
+
         if math.isclose(job[2], 0) or math.isclose(job[3], 0):
             job_id += 1
             continue
