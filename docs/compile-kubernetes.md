@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-* [Bazel](https://docs.bazel.build/versions/master/install-ubuntu.html)
+* [Bazel 0.7.0](https://github.com/bazelbuild/bazel/releases/tag/0.7.0)
 * A Docker registry accessible to both the machine that compiles and the machines where Kubernetes will be deployed
 
 ## Compilation
