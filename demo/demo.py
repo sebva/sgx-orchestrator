@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import argparse
-
 import re
+from itertools import tee, filterfalse
+from typing import Tuple
 
 from cluster import Cluster
 
@@ -16,8 +17,6 @@ units = {
 
 
 def deploy_pod():
-    print("deploy")
-
     match = re.fullmatch(r"(\d+(\.\d+)?)( ?([kMG]))?", args.memory)
     if match is None:
         print("Invalid memory usage")
@@ -47,8 +46,19 @@ def node_status():
     print("node")
 
 
+def count_sgx_standard(pods) -> Tuple[int, int]:
+    i1, i2 = tee(pods)
+    standard_pods, sgx_pods = filterfalse(cluster.pod_requests_sgx, i1), filter(cluster.pod_requests_sgx, i2)
+
+    return len(list(standard_pods)), len(list(sgx_pods))
+
+
 def global_status():
-    print("global")
+    pods = cluster.list_pods()
+
+    for metric in args.metrics:
+        filtered = filter(global_metrics[metric], pods)
+        print("%s: standard=%d sgx=%d" % ((metric,) + count_sgx_standard(filtered)))
 
 
 functions = {
@@ -62,8 +72,10 @@ node_metrics = {
 }
 
 global_metrics = {
-    "pending": None,
-    "total": None,
+    "pending": lambda pod: pod.spec.node_name is None,
+    "running": lambda pod: pod.status.phase == "Running",
+    "finished": lambda pod: pod.status.phase == "Succeeded",
+    "total": lambda x: x,
 }
 
 if __name__ == '__main__':
@@ -78,15 +90,15 @@ if __name__ == '__main__':
     deploy_subparser.add_argument("--memory", "-m", "--epc", "-e", required=True)
     deploy_subparser.add_argument("--limit", "-l", required=True)
     deploy_subparser.add_argument("--scheduler", "-s", default="", help="Scheduler to use",
-                                  choices=["spread", "binpack", ""])
-    deploy_subparser.add_argument("--duration", "-d", help="Jobs runs for this much seconds", default=300)
+                                  choices=["spread", "binpack", "", "dummy"])
+    deploy_subparser.add_argument("--duration", "-d", help="Jobs runs for this much seconds", type=int, default=300)
 
     node_status_subparser = subparsers.add_parser("node-status")
     node_status_subparser.add_argument("node")
     node_status_subparser.add_argument("metrics", nargs="+", help="Metrics to fetch", choices=node_metrics.keys())
 
     global_status_subparser = subparsers.add_parser("global-status")
-    global_status_subparser.add_argument("metrics", nargs="+", help="Metrics to fetch", choices=node_metrics.keys())
+    global_status_subparser.add_argument("metrics", nargs="+", help="Metrics to fetch", choices=global_metrics.keys())
 
     args = parser.parse_args()
 

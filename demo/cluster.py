@@ -1,8 +1,11 @@
 import traceback
+from typing import List
 
 import kubernetes
 from kubernetes.client import *
 from kubernetes.client.rest import ApiException
+
+DEFAULT_NAMESPACE = "default"
 
 
 class Cluster(object):
@@ -12,6 +15,14 @@ class Cluster(object):
     def __init__(self):
         kubernetes.config.load_kube_config()
         self.api = CoreV1Api()
+
+    @staticmethod
+    def pod_requests_sgx(pod: V1Pod) -> bool:
+        for container in pod.spec.containers:
+            for demands in (container.resources.limits, container.resources.requests):
+                if isinstance(demands, dict) and "intel.com/sgx" in demands.keys():
+                    return True
+        return False
 
     def launch_pod(self, pod_name: str, scheduler: str, duration: int, limit: float, actual: float, is_sgx: bool):
         resource_requirements = V1ResourceRequirements(
@@ -42,7 +53,10 @@ class Cluster(object):
         )
 
         try:
-            self.api.create_namespaced_pod("default", pod)
+            self.api.create_namespaced_pod(DEFAULT_NAMESPACE, pod)
         except ApiException:
             print("Creating Pod failed!")
             traceback.print_exc()
+
+    def list_pods(self) -> List[V1Pod]:
+        return self.api.list_namespaced_pod(DEFAULT_NAMESPACE).items
