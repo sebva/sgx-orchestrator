@@ -51,11 +51,15 @@ def node_status():
 
     for node in nodes:
         pods = [x for x in all_pods if x.spec.node_name == node]
+        if len(pods) < 1:
+            continue
+
         for metric in args.metrics:
             string_format = node_metrics[metric][0]
             func = node_metrics[metric][1]
 
-            print("%s %s: %s" % (node, metric, string_format % tuple(sum(x) for x in zip(*map(func, pods)))))
+            formatted_output = string_format % tuple(sum(x) for x in zip(*map(func, pods)))
+            print("%s %s: %s" % (node, metric, formatted_output))
 
 
 def count_sgx_standard(pods) -> Tuple[int, int]:
@@ -81,7 +85,7 @@ functions = {
 
 node_metrics = {
     "pods": ("standard=%d sgx=%d", lambda pod: count_sgx_standard([pod])),
-    "epc": None,
+    # "epc": ("epc_pages=%d", lambda pod: accumulatepod.spec.resources.),
     "memory": None,
 }
 
