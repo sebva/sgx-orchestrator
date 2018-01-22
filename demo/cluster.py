@@ -34,7 +34,7 @@ class Cluster(object):
                 containers=[V1Container(
                     name="app",
                     image=self.sgx_image if is_sgx else self.standard_image,
-                    args=["-d", str(duration), str(int(actual))],
+                    args=["-d", str(duration), str(int(actual / 4096))],
                     resources=resource_requirements
                 )],
                 restart_policy="OnFailure"
