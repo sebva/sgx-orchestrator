@@ -63,7 +63,8 @@ class Cluster(object):
             0
         )
 
-    def launch_pod(self, pod_name: str, scheduler: str, duration: int, limit: float, actual: float, is_sgx: bool):
+    def launch_pod(self, pod_name: str, scheduler: str, duration: int, limit: float, actual: float, is_sgx: bool,
+                   node: str = None):
         resource_requirements = V1ResourceRequirements(
             limits={"intel.com/sgx": int(limit / 4096)},
             requests={"intel.com/sgx": int(limit / 4096)},
@@ -87,7 +88,8 @@ class Cluster(object):
                     args=["-d", str(duration), str(int(actual / 4096))],
                     resources=resource_requirements
                 )],
-                restart_policy="OnFailure"
+                restart_policy="OnFailure",
+                node_name=node,
             )
         )
 

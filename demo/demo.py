@@ -39,7 +39,12 @@ def deploy_pod():
     except KeyError:
         pass
 
-    cluster.launch_pod(args.name, args.scheduler, args.duration, limit, memory, args.sgx)
+    if args.node is None:
+        scheduler = args.scheduler
+    else:
+        scheduler = "demo"
+
+    cluster.launch_pod(args.name, scheduler, args.duration, limit, memory, args.sgx, args.node)
 
 
 def node_status():
