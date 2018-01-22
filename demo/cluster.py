@@ -1,6 +1,7 @@
 import traceback
 from typing import List
 
+import functools
 import kubernetes
 from kubernetes.client import *
 from kubernetes.client.rest import ApiException
@@ -23,6 +24,44 @@ class Cluster(object):
                 if isinstance(demands, dict) and "intel.com/sgx" in demands.keys():
                     return True
         return False
+
+    @staticmethod
+    def convert_k8s_suffix(k8s_value: str) -> float:
+        try:
+            return float(k8s_value)
+        except ValueError:
+            pass
+
+        suffixes = [
+            ("Ki", 2, 10),
+            ("Mi", 2, 20),
+            ("Gi", 2, 30),
+            ("Ti", 2, 40),
+            ("Pi", 2, 50),
+            ("Ei", 2, 60),
+            ("n", 10, -9),
+            ("u", 10, -6),
+            ("m", 10, -3),
+            ("k", 10, 3),
+            ("M", 10, 6),
+            ("G", 10, 9),
+            ("T", 10, 12),
+            ("P", 10, 15),
+            ("E", 10, 18),
+        ]
+        for suffix in suffixes:
+            if k8s_value.endswith(suffix[0]):
+                k8s_value_without_suffix = k8s_value[:-len(suffix[0])]
+                return float(k8s_value_without_suffix) * (suffix[1] ** suffix[2])
+        return float(k8s_value)
+
+    @staticmethod
+    def pod_sum_resources_requests(pod: V1Pod, metric: str):
+        return functools.reduce(
+            lambda acc, container: acc + Cluster.convert_k8s_suffix(container.resources.requests[metric]),
+            filter(lambda x: x.resources.requests is not None and metric in x.resources.requests, pod.spec.containers),
+            0
+        )
 
     def launch_pod(self, pod_name: str, scheduler: str, duration: int, limit: float, actual: float, is_sgx: bool):
         resource_requirements = V1ResourceRequirements(

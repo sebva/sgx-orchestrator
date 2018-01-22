@@ -85,8 +85,8 @@ functions = {
 
 node_metrics = {
     "pods": ("standard=%d sgx=%d", lambda pod: count_sgx_standard([pod])),
-    # "epc": ("epc_pages=%d", lambda pod: accumulatepod.spec.resources.),
-    "memory": None,
+    "epc": ("epc_pages=%d", lambda pod: [Cluster.pod_sum_resources_requests(pod, "intel.com/sgx")]),
+    "memory": ("memory=%d", lambda pod: [Cluster.pod_sum_resources_requests(pod, "memory")]),
 }
 
 global_metrics = {
