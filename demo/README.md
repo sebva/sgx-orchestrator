@@ -30,7 +30,7 @@ sudo apt install python3-pip python3-virtualenv virtualenv
 Create virtualenv, enter it, install Python dependencies
 
 ```bash
-virtualenv -p /ust/bin/python3 --distribute .venv
+virtualenv -p /usr/bin/python3 --distribute .venv
 . ./.venv/bin/activate
 pip install -r requirements.txt
 ```
