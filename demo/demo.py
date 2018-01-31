@@ -107,22 +107,28 @@ if __name__ == '__main__':
     subparsers.required = True
 
     deploy_subparser = subparsers.add_parser("deploy")
+    deploy_subparser.description = "Deploy a stressor pod to the cluster."
     deploy_subparser.add_argument("name", help="Pod identifier")
     deploy_subparser.add_argument("--node", "-n", help="Node on which to deploy the pod (bypass the scheduler)")
     deploy_subparser.add_argument("--sgx", action="store_true", help="Job will be SGX")
-    deploy_subparser.add_argument("--memory", "-m", "--epc", "-e", required=True)
-    deploy_subparser.add_argument("--limit", "-l", required=True)
-    deploy_subparser.add_argument("--scheduler", "-s", default="", help="Scheduler to use",
+    deploy_subparser.add_argument("--memory", "-m", "--epc", "-e", required=True,
+                                  help="Memory or EPC actual usage in bytes (allows k, M, or G suffix)")
+    deploy_subparser.add_argument("--limit", "-l", required=True,
+                                  help="Memory usage limit in bytes (allows k, M, or G suffix)")
+    deploy_subparser.add_argument("--scheduler", "-s", default="",
+                                  help="Scheduler to use (empty string for default scheduler)",
                                   choices=["spread", "binpack", "", "dummy"])
     deploy_subparser.add_argument("--duration", "-d", help="Jobs runs for this much seconds", type=int, default=300)
 
     node_status_subparser = subparsers.add_parser("node-status")
+    node_status_subparser.description = "Get metrics about pods allocated to the nodes of the cluster."
     node_status_subparser.add_argument("--node", "-n", action="append",
                                        help="Node(s) for which to print the status (no argument = all nodes)")
     node_status_subparser.add_argument("--running", "-r", action="store_true", help="Only consider running pods")
     node_status_subparser.add_argument("metrics", nargs="+", help="Metrics to fetch", choices=node_metrics.keys())
 
     global_status_subparser = subparsers.add_parser("global-status")
+    global_status_subparser.description = "Get metrics about the global state of the cluster."
     global_status_subparser.add_argument("metrics", nargs="+", help="Metrics to fetch", choices=global_metrics.keys())
 
     args = parser.parse_args()
