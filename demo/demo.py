@@ -55,7 +55,7 @@ def node_status():
         nodes = sorted(list({x.spec.node_name for x in all_pods if x.spec.node_name is not None}))
 
     for node in nodes:
-        pods = [x for x in all_pods if x.spec.node_name == node]
+        pods = [x for x in all_pods if x.spec.node_name == node and (not args.running or x.status.phase == "Running")]
         if len(pods) < 1:
             continue
 
@@ -119,6 +119,7 @@ if __name__ == '__main__':
     node_status_subparser = subparsers.add_parser("node-status")
     node_status_subparser.add_argument("--node", "-n", action="append",
                                        help="Node(s) for which to print the status (no argument = all nodes)")
+    node_status_subparser.add_argument("--running", "-r", action="store_true", help="Only consider running pods")
     node_status_subparser.add_argument("metrics", nargs="+", help="Metrics to fetch", choices=node_metrics.keys())
 
     global_status_subparser = subparsers.add_parser("global-status")
