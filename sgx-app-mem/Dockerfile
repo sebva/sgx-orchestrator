@@ -1,4 +1,4 @@
-FROM sebvaucher/sgx-base:sgx-1.9
+FROM sebvaucher/sgx-base:sgx_1.9
 
 RUN apt-get update && apt-get -yq install --no-install-recommends bc && apt-get clean
 
