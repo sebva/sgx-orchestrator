@@ -6,7 +6,7 @@ from kubernetes.client import V1Pod, V1Node
 from utils import separate_nodes, pod_requests_sgx, nodes_epc_usage, convert_k8s_suffix, nodes_memory_usage, \
     pod_sum_resources_requests
 
-overcommit_tolerance = 0.8  # Undercommit, as aesmd and friends occupy some EPC
+overcommit_tolerance = 1.0  # To overcommit (>1.0) or undercommit (<1.0) the EPC
 
 
 class Policy(ABC):
