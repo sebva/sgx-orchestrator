@@ -17,7 +17,7 @@ bazel build //build/debs --incompatible_disallow_set_constructor=false
 3. Setup a couple environment variables
 ```bash
 export KUBE_DOCKER_REGISTRY=127.0.0.1:5000  # The address of the Docker registry
-export KUBE_DOCKER_IMAGE_TAG=v1.8.0-beta.1  # The version tag that will be referenced by kubeadm
+export KUBE_DOCKER_IMAGE_TAG=v1.8.0  # The version tag that will be referenced by kubeadm
 ```
 4. Build the Docker containers
 ```bash
@@ -79,3 +79,4 @@ sudo systemctl daemon-reload
 sudo systemctl restart kubelet
 ```
 6. Initialize the cluster by following the instructions in [setup-kubernetes-cluster.md](setup-kubernetes-cluster.md)
+

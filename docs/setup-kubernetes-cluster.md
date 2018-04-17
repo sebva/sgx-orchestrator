@@ -1,51 +1,27 @@
 # Setting up a Kubernetes cluster
 
 This document describes the steps to follow to deploy a Kubernetes cluster with the required components for a scheduler to work.
-We assume that the deployment is done on IIUN's _clusterinfo_.
 
-## Virtual machines
+## Pre-requisites
 
-We tested the deployment on the Ubuntu 16.04 image (v5.4.0) that is available in OpenNebula Marketplace. At the time of writing, the image is downloaded as ID 913.
-We recommend a separate partition for Docker data which can be large (mounted at `/var/lib/docker`).
+We assume that your cluster of machines runs Ubuntu 16.04.
+Your cluster will be split in 3 types of machines:
 
-## Physical machine
+1. 1 machine will be your Kubernetes master
+2. Some SGX-enabled machines will be used as SGX-enabled Kubernetes nodes
+3. The rest of the machines will be used as regular Kuberetes nodes
 
-If you are installing Kubernetes on a physical machine, you have to **completely disable its swap**!
-
-## Combine virtual and physical machines
-
-In order to use the desktop SGX machines that are in the cluster, it is a good idea to make them communicate with the VMs directly, without routing over that poor `clusterinfo` machine. To do so, you can join the SGX machine to the VLAN with ID 2100.
-
-* **Double check that the IP ranges and VLAN ID specified here are still correct by cross-checking in OpenNebula**
-* Choose a free IP in the range and hold it in OpenNebula (I chose `172.16.63.63`)
-* Find out the name of the network device that is connected to the switch in the cluster (`enp0s31f6` in this case)
-
-When you have gathered all the information, perform the changes:
-```
-sudo ip link add link enp0s31f6 name enp0s31f6.2100 type vlan id 2100  # Declare a virtual device
-sudo ip addr add 172.16.63.63/16 dev enp0s31f6.2100                    # Add an IP address to it
-sudo ip link set enp0s31f6.2100 up                                     # Bring up the device
-```
-
-Verify that the connection is direct between the nodes:
-```
-traceroute 172.16.0.25                               
-```
-The answer should be:
-```
-traceroute to 172.16.0.25 (172.16.0.25), 30 hops max, 60 byte packets
- 1  172.16.0.25 (172.16.0.25)  0.566 ms  0.533 ms  0.536 ms
-```
+Before starting, **please carefully read this**: If you are installing Kubernetes on a physical machine, you have to **completely disable its swap**!
 
 ## Pre-installation on all machines
 
-Connect as _root_ on all machines (use `clusterssh` for easier operation).
+Connect as _root_ on all machines (you may want to use `clusterssh` for easier operation).
 
-1. Install system updates
+1. Install system updates (recommended)
 2. Make sure that each machine has a distinct hostname, and that its IP address is referenced in `/etc/hosts`
 3. Install Docker using the `docker.io` package available in the regular Ubuntu repositories
     1. Also install the tools related to the storage backend that Docker will be using. Eg. `aufs-tools` in the case of `aufs` (default in Ubuntu).
-4. Install `kubeadm` from the repository from Google
+4. Install `kubeadm` from the repository from Google (if you compiled Kubernetes yourself, install your own version)
 ```
 apt install apt-transport-https
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
@@ -55,26 +31,26 @@ EOF
 apt update
 apt install kubeadm
 ```
-5. Add a normal user for regular operation (we chose the name _ubuntu_)
+5. Add a normal user for regular operation (we choose the name _ubuntu_)
 ```
 adduser ubuntu
 usermod -a -G docker ubuntu
 usermod -a -G sudo ubuntu
 ```
-6. **Allow traffic between hosts**
+6. **Very important: Allow traffic between hosts**
 ```
-sudo iptables -P FORWARD ACCEPT
+iptables -P FORWARD ACCEPT
 ```
 
 ## Instantiate the cluster
 
-Execute these commands on the master machine using the normal user created previously.
+Execute these commands **on the master machine only**, using the normal user created previously.
 
-6. Create the config file for `kubeadm`. `imageRepository` and `kubernetesVersion` are only needed if you require a specific version of Kubernetes.
+6. Create the config file for `kubeadm`. `imageRepository` and `kubernetesVersion` are only needed if you require a specific version of Kubernetes (_e.g._, if you compiled Kubernetes yourself).
 ```yaml
 apiVersion: kubeadm.k8s.io/v1alpha1
 imageRepository: "172.16.0.25:5000"
-kubernetesVersion: v1.8.0-beta.1
+kubernetesVersion: v1.8.0
 networking:
   podSubnet: 10.244.0.0/16
 ```
@@ -106,3 +82,4 @@ sudo journalctl -xeu docker -u kubelet
 ### Heapster
 
 You can now [deploy Heapster](deploy-heapster.md) to your cluster to monitor the nodes and pods.
+
