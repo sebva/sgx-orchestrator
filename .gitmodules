@@ -17,3 +17,6 @@
 	path = kubernetes
 	url = https://github.com/sebyx31/kubernetes.git
 	branch = sgx-deviceplugin
+[submodule "heapster"]
+	path = heapster
+	url = https://github.com/kubernetes/heapster.git
