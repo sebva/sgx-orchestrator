@@ -277,6 +277,10 @@ the trace. `superrunner.py` uses `runner.py` to launch multiple
 experiments back-to-back, and makes use of our [`results-parser`](results-parser/logs_parser.py) to
 produce ready-to-use data for production of plots.
 
+We provide the subset of the Google Borg trace (from 6480s to 10080s) that we used to perform the experiments presented in our paper.
+You can find the data in the `runner/trace/task_1h.csv.xz` compressed file.
+The file must be uncompressed before it can be given to the experiments runner.
+
 The scripts can be run on any machine that is configured with the
 cluster's API endpoint in its *kubectl* configuration. Therefore, there is no building
 needed. The dependencies needed for the scripts can be installed using a
