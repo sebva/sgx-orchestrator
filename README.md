@@ -1,11 +1,11 @@
-SGX-aware container scheduler
-=============================
+SGX-aware container orchestrator
+================================
 
-This repository hosts the technical documentation and source code of our SGX-aware container scheduler project.
+This repository hosts the technical documentation and source code of our SGX-aware container orchestrator project.
 Its architecture and implementation are described in our paper _"SGX-Aware Container Orchestration for Heterogeneous Clusters"_, to appear in the proceedings of the [38th IEEE International Conference on Distributed Computing Systems (ICDCS 2018)](http://icdcs2018.ocg.at/).
 The paper also contains a broad evaluation of the scheduler itself, as well as micro-benchmarks relative to running SGX-enabled containers in a multi-tenant cloud.
 
-Our SGX-aware scheduler is based on the Kubernetes container orchestrator.
+Our SGX-aware orchestrator is based on [Kubernetes](https://kubernetes.io/).
 It allows to efficiently schedule SGX-enabled containers in a heterogeneous cluster of SGX- and non-SGX-enabled machines.
 
 This effort is part of the [SecureCloud project](https://www.securecloudproject.eu/).
