@@ -8,9 +8,9 @@
 ## Compilation
 
 1. Checkout the sources as described in [setup-kubernetes-ide.md](docs/setup-kubernetes-ide.md)
-    1. In order to get the _deviceplugins_ feature built-in, you can use the repository at https://github.com/sebyx31/kubernetes, on the `sgx-deviceplugin` branch.
+    1. In order to get the _deviceplugins_ feature built-in, you can use the repository at https://github.com/sebva/kubernetes, on the `sgx-deviceplugin` branch.
 2. Compile the `.deb` packages
-    1. If bazel complains about faulty checksums, the file to modify is [`build/root/WORKSPACE`](https://github.com/sebyx31/kubernetes/blob/sgx-deviceplugin/build/root/WORKSPACE)
+    1. If bazel complains about faulty checksums, the file to modify is [`build/root/WORKSPACE`](https://github.com/sebva/kubernetes/blob/sgx-deviceplugin/build/root/WORKSPACE)
 ```bash
 bazel build //build/debs --incompatible_disallow_set_constructor=false
 ```

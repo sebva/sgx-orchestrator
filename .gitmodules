@@ -6,16 +6,16 @@
 	url = https://gitlab.securecloud.works/rafael.pires/sgx_common.git
 [submodule "docker-sgx"]
 	path = docker-sgx
-	url = https://github.com/sebyx31/docker-sgx.git
+	url = https://github.com/sebva/docker-sgx.git
 [submodule "stress-sgx"]
 	path = stress-sgx
-	url = https://github.com/sebyx31/stress-sgx.git
+	url = https://github.com/sebva/stress-sgx.git
 [submodule "sgx-driver"]
 	path = sgx-driver
-	url = https://github.com/sebyx31/linux-sgx-driver.git
+	url = https://github.com/sebva/linux-sgx-driver.git
 [submodule "kubernetes"]
 	path = kubernetes
-	url = https://github.com/sebyx31/kubernetes.git
+	url = https://github.com/sebva/kubernetes.git
 	branch = sgx-deviceplugin
 [submodule "heapster"]
 	path = heapster

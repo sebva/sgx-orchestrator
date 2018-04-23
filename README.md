@@ -229,8 +229,8 @@ docker push ${docker_registry}/standard-app-mem:1.2
 ### Stress-SGX
 
 We consider the sample workloads described above as "legacy".
-Instead, we recommend the use of [Stress-SGX](https://github.com/sebyx31/stress-sgx) as a stress workload.
-Further instructions are given in its [own repository](https://github.com/sebyx31/stress-sgx/blob/master/README.md).
+Instead, we recommend the use of [Stress-SGX](https://github.com/sebva/stress-sgx) as a stress workload.
+Further instructions are given in its [own repository](https://github.com/sebva/stress-sgx/blob/master/README.md).
 
 Stress-SGX is described in more detail in the associated paper _"Stress-SGX: Load and Stress your Enclaves for Fun and Profit"_, to appear in the proceedings of the [6th Edition of The International Conference on NETworked sYStems (NETYS 2018)](http://netys.net/).
 
