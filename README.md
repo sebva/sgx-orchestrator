@@ -64,12 +64,12 @@ We assume that the following components are ready to use:
 1.  A Docker registry. In the following explanations, we will
     refer to its address as `$docker_registry`.
 2.  A cluster of SGX- and non-SGX-enabled machines that meet the following criteria:
-    a.  Connected together to the same network
-    b.  With access to the Docker registry at `$docker_registry`
-    c.  One machine is dedicated as Kubernetes master
-    d.  SGX-compatible machines are used as SGX-enabled nodes
+    1.  Connected together to the same network
+    2.  With access to the Docker registry at `$docker_registry`
+    3.  One machine is dedicated as Kubernetes master
+    4.  SGX-compatible machines are used as SGX-enabled nodes
         * The Intel SGX Platform Software (PSW) must be disabled
-    e.  The remaining machines are used as standard nodes
+    5.  The remaining machines are used as standard nodes
 
 ### Custom SGX driver
 
