@@ -20,11 +20,22 @@ If not, see <http://www.gnu.org/licenses/>.
 Citing this work in your own research article
 ---------------------------------------------
 
-If you use this work in your reasearch, please cite our paper _"SGX-Aware Container Orchestration for Heterogeneous Clusters"_.
+If you use this work in your reasearch, please cite our paper [_"SGX-Aware Container Orchestration for Heterogeneous Clusters"_](https://arxiv.org/pdf/1805.05847.pdf).
 
-_BibTeX entry details will be included here after the proceedings of ICDCS 2018 are published._
+```
+@inproceedings{vaucher2018sgxaware,
+    author={S. Vaucher and R. Pires and P. Felber and M. Pasin and V. Schiavoni and C. Fetzer},
+    booktitle={2018 IEEE 38th International Conference on Distributed Computing Systems (ICDCS)},
+    title={{SGX}-Aware Container Orchestration for Heterogeneous Clusters},
+    month={July},
+    year={2018},
+    pages={730-741},
+    doi={10.1109/ICDCS.2018.00076},
+    issn={2575-8411},
+}
+```
 
-Also, if you use _Stress-SGX_ as a workload, please also cite the corresponding paper _"Stress-SGX: Load and Stress your Enclaves for Fun and Profit"_.
+Also, if you use _Stress-SGX_ as a workload, please also cite the corresponding paper [_"Stress-SGX: Load and Stress your Enclaves for Fun and Profit"_](https://seb.vaucher.org/papers/stress-sgx.pdf).
 
 _BibTeX entry details will be included here after the proceedings of NETYS 2018 are published._
 
