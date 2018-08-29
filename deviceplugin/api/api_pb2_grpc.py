@@ -20,7 +20,7 @@ class RegistrationStub(object):
       channel: A grpc.Channel.
     """
     self.Register = channel.unary_unary(
-        '/deviceplugin.Registration/Register',
+        '/v1beta1.Registration/Register',
         request_serializer=api__pb2.RegisterRequest.SerializeToString,
         response_deserializer=api__pb2.Empty.FromString,
         )
@@ -52,7 +52,7 @@ def add_RegistrationServicer_to_server(servicer, server):
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
-      'deviceplugin.Registration', rpc_method_handlers)
+      'v1beta1.Registration', rpc_method_handlers)
   server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -66,21 +66,39 @@ class DevicePluginStub(object):
     Args:
       channel: A grpc.Channel.
     """
+    self.GetDevicePluginOptions = channel.unary_unary(
+        '/v1beta1.DevicePlugin/GetDevicePluginOptions',
+        request_serializer=api__pb2.Empty.SerializeToString,
+        response_deserializer=api__pb2.DevicePluginOptions.FromString,
+        )
     self.ListAndWatch = channel.unary_stream(
-        '/deviceplugin.DevicePlugin/ListAndWatch',
+        '/v1beta1.DevicePlugin/ListAndWatch',
         request_serializer=api__pb2.Empty.SerializeToString,
         response_deserializer=api__pb2.ListAndWatchResponse.FromString,
         )
     self.Allocate = channel.unary_unary(
-        '/deviceplugin.DevicePlugin/Allocate',
+        '/v1beta1.DevicePlugin/Allocate',
         request_serializer=api__pb2.AllocateRequest.SerializeToString,
         response_deserializer=api__pb2.AllocateResponse.FromString,
+        )
+    self.PreStartContainer = channel.unary_unary(
+        '/v1beta1.DevicePlugin/PreStartContainer',
+        request_serializer=api__pb2.PreStartContainerRequest.SerializeToString,
+        response_deserializer=api__pb2.PreStartContainerResponse.FromString,
         )
 
 
 class DevicePluginServicer(object):
   """DevicePlugin is the service advertised by Device Plugins
   """
+
+  def GetDevicePluginOptions(self, request, context):
+    """GetDevicePluginOptions returns options to be communicated with Device
+    Manager
+    """
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
 
   def ListAndWatch(self, request, context):
     """ListAndWatch returns a stream of List of Devices
@@ -100,9 +118,23 @@ class DevicePluginServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def PreStartContainer(self, request, context):
+    """PreStartContainer is called, if indicated by Device Plugin during registeration phase,
+    before each container start. Device plugin can run device specific operations
+    such as reseting the device before making devices available to the container
+    """
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_DevicePluginServicer_to_server(servicer, server):
   rpc_method_handlers = {
+      'GetDevicePluginOptions': grpc.unary_unary_rpc_method_handler(
+          servicer.GetDevicePluginOptions,
+          request_deserializer=api__pb2.Empty.FromString,
+          response_serializer=api__pb2.DevicePluginOptions.SerializeToString,
+      ),
       'ListAndWatch': grpc.unary_stream_rpc_method_handler(
           servicer.ListAndWatch,
           request_deserializer=api__pb2.Empty.FromString,
@@ -113,7 +145,12 @@ def add_DevicePluginServicer_to_server(servicer, server):
           request_deserializer=api__pb2.AllocateRequest.FromString,
           response_serializer=api__pb2.AllocateResponse.SerializeToString,
       ),
+      'PreStartContainer': grpc.unary_unary_rpc_method_handler(
+          servicer.PreStartContainer,
+          request_deserializer=api__pb2.PreStartContainerRequest.FromString,
+          response_serializer=api__pb2.PreStartContainerResponse.SerializeToString,
+      ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
-      'deviceplugin.DevicePlugin', rpc_method_handlers)
+      'v1beta1.DevicePlugin', rpc_method_handlers)
   server.add_generic_rpc_handlers((generic_handler,))

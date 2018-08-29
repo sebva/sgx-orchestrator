@@ -17,42 +17,28 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='api.proto',
-  package='deviceplugin',
+  package='v1beta1',
   syntax='proto3',
-  serialized_pb=_b('\n\tapi.proto\x12\x0c\x64\x65viceplugin\"K\n\x0fRegisterRequest\x12\x0f\n\x07version\x18\x01 \x01(\t\x12\x10\n\x08\x65ndpoint\x18\x02 \x01(\t\x12\x15\n\rresource_name\x18\x03 \x01(\t\"\x07\n\x05\x45mpty\"=\n\x14ListAndWatchResponse\x12%\n\x07\x64\x65vices\x18\x01 \x03(\x0b\x32\x14.deviceplugin.Device\"$\n\x06\x44\x65vice\x12\n\n\x02ID\x18\x01 \x01(\t\x12\x0e\n\x06health\x18\x02 \x01(\t\"%\n\x0f\x41llocateRequest\x12\x12\n\ndevicesIDs\x18\x01 \x03(\t\"A\n\x10\x41llocateResponse\x12-\n\x04spec\x18\x01 \x03(\x0b\x32\x1f.deviceplugin.DeviceRuntimeSpec\"\xd5\x01\n\x11\x44\x65viceRuntimeSpec\x12\n\n\x02ID\x18\x01 \x01(\t\x12\x37\n\x04\x65nvs\x18\x02 \x03(\x0b\x32).deviceplugin.DeviceRuntimeSpec.EnvsEntry\x12#\n\x06mounts\x18\x03 \x03(\x0b\x32\x13.deviceplugin.Mount\x12)\n\x07\x64\x65vices\x18\x04 \x03(\x0b\x32\x18.deviceplugin.DeviceSpec\x1a+\n\tEnvsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"E\n\x05Mount\x12\x16\n\x0e\x63ontainer_path\x18\x01 \x01(\t\x12\x11\n\thost_path\x18\x02 \x01(\t\x12\x11\n\tread_only\x18\x03 \x01(\x08\"L\n\nDeviceSpec\x12\x16\n\x0e\x63ontainer_path\x18\x01 \x01(\t\x12\x11\n\thost_path\x18\x02 \x01(\t\x12\x13\n\x0bpermissions\x18\x03 \x01(\t2P\n\x0cRegistration\x12@\n\x08Register\x12\x1d.deviceplugin.RegisterRequest\x1a\x13.deviceplugin.Empty\"\x00\x32\xa8\x01\n\x0c\x44\x65vicePlugin\x12K\n\x0cListAndWatch\x12\x13.deviceplugin.Empty\x1a\".deviceplugin.ListAndWatchResponse\"\x00\x30\x01\x12K\n\x08\x41llocate\x12\x1d.deviceplugin.AllocateRequest\x1a\x1e.deviceplugin.AllocateResponse\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\tapi.proto\x12\x07v1beta1\"1\n\x13\x44\x65vicePluginOptions\x12\x1a\n\x12pre_start_required\x18\x01 \x01(\x08\"z\n\x0fRegisterRequest\x12\x0f\n\x07version\x18\x01 \x01(\t\x12\x10\n\x08\x65ndpoint\x18\x02 \x01(\t\x12\x15\n\rresource_name\x18\x03 \x01(\t\x12-\n\x07options\x18\x04 \x01(\x0b\x32\x1c.v1beta1.DevicePluginOptions\"\x07\n\x05\x45mpty\"8\n\x14ListAndWatchResponse\x12 \n\x07\x64\x65vices\x18\x01 \x03(\x0b\x32\x0f.v1beta1.Device\"$\n\x06\x44\x65vice\x12\n\n\x02ID\x18\x01 \x01(\t\x12\x0e\n\x06health\x18\x02 \x01(\t\".\n\x18PreStartContainerRequest\x12\x12\n\ndevicesIDs\x18\x01 \x03(\t\"\x1b\n\x19PreStartContainerResponse\"P\n\x0f\x41llocateRequest\x12=\n\x12\x63ontainer_requests\x18\x01 \x03(\x0b\x32!.v1beta1.ContainerAllocateRequest\".\n\x18\x43ontainerAllocateRequest\x12\x12\n\ndevicesIDs\x18\x01 \x03(\t\"S\n\x10\x41llocateResponse\x12?\n\x13\x63ontainer_responses\x18\x01 \x03(\x0b\x32\".v1beta1.ContainerAllocateResponse\"\xc8\x02\n\x19\x43ontainerAllocateResponse\x12:\n\x04\x65nvs\x18\x01 \x03(\x0b\x32,.v1beta1.ContainerAllocateResponse.EnvsEntry\x12\x1e\n\x06mounts\x18\x02 \x03(\x0b\x32\x0e.v1beta1.Mount\x12$\n\x07\x64\x65vices\x18\x03 \x03(\x0b\x32\x13.v1beta1.DeviceSpec\x12H\n\x0b\x61nnotations\x18\x04 \x03(\x0b\x32\x33.v1beta1.ContainerAllocateResponse.AnnotationsEntry\x1a+\n\tEnvsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\x1a\x32\n\x10\x41nnotationsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"E\n\x05Mount\x12\x16\n\x0e\x63ontainer_path\x18\x01 \x01(\t\x12\x11\n\thost_path\x18\x02 \x01(\t\x12\x11\n\tread_only\x18\x03 \x01(\x08\"L\n\nDeviceSpec\x12\x16\n\x0e\x63ontainer_path\x18\x01 \x01(\t\x12\x11\n\thost_path\x18\x02 \x01(\t\x12\x13\n\x0bpermissions\x18\x03 \x01(\t2F\n\x0cRegistration\x12\x36\n\x08Register\x12\x18.v1beta1.RegisterRequest\x1a\x0e.v1beta1.Empty\"\x00\x32\xbc\x02\n\x0c\x44\x65vicePlugin\x12H\n\x16GetDevicePluginOptions\x12\x0e.v1beta1.Empty\x1a\x1c.v1beta1.DevicePluginOptions\"\x00\x12\x41\n\x0cListAndWatch\x12\x0e.v1beta1.Empty\x1a\x1d.v1beta1.ListAndWatchResponse\"\x00\x30\x01\x12\x41\n\x08\x41llocate\x12\x18.v1beta1.AllocateRequest\x1a\x19.v1beta1.AllocateResponse\"\x00\x12\\\n\x11PreStartContainer\x12!.v1beta1.PreStartContainerRequest\x1a\".v1beta1.PreStartContainerResponse\"\x00\x62\x06proto3')
 )
 
 
 
 
-_REGISTERREQUEST = _descriptor.Descriptor(
-  name='RegisterRequest',
-  full_name='deviceplugin.RegisterRequest',
+_DEVICEPLUGINOPTIONS = _descriptor.Descriptor(
+  name='DevicePluginOptions',
+  full_name='v1beta1.DevicePluginOptions',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='version', full_name='deviceplugin.RegisterRequest.version', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      name='pre_start_required', full_name='v1beta1.DevicePluginOptions.pre_start_required', index=0,
+      number=1, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='endpoint', full_name='deviceplugin.RegisterRequest.endpoint', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='resource_name', full_name='deviceplugin.RegisterRequest.resource_name', index=2,
-      number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -65,14 +51,66 @@ _REGISTERREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=27,
-  serialized_end=102,
+  serialized_start=22,
+  serialized_end=71,
+)
+
+
+_REGISTERREQUEST = _descriptor.Descriptor(
+  name='RegisterRequest',
+  full_name='v1beta1.RegisterRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='version', full_name='v1beta1.RegisterRequest.version', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='endpoint', full_name='v1beta1.RegisterRequest.endpoint', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='resource_name', full_name='v1beta1.RegisterRequest.resource_name', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='options', full_name='v1beta1.RegisterRequest.options', index=3,
+      number=4, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=73,
+  serialized_end=195,
 )
 
 
 _EMPTY = _descriptor.Descriptor(
   name='Empty',
-  full_name='deviceplugin.Empty',
+  full_name='v1beta1.Empty',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
@@ -89,25 +127,25 @@ _EMPTY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=104,
-  serialized_end=111,
+  serialized_start=197,
+  serialized_end=204,
 )
 
 
 _LISTANDWATCHRESPONSE = _descriptor.Descriptor(
   name='ListAndWatchResponse',
-  full_name='deviceplugin.ListAndWatchResponse',
+  full_name='v1beta1.ListAndWatchResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='devices', full_name='deviceplugin.ListAndWatchResponse.devices', index=0,
+      name='devices', full_name='v1beta1.ListAndWatchResponse.devices', index=0,
       number=1, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -120,32 +158,32 @@ _LISTANDWATCHRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=113,
-  serialized_end=174,
+  serialized_start=206,
+  serialized_end=262,
 )
 
 
 _DEVICE = _descriptor.Descriptor(
   name='Device',
-  full_name='deviceplugin.Device',
+  full_name='v1beta1.Device',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='ID', full_name='deviceplugin.Device.ID', index=0,
+      name='ID', full_name='v1beta1.Device.ID', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='health', full_name='deviceplugin.Device.health', index=1,
+      name='health', full_name='v1beta1.Device.health', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -158,25 +196,80 @@ _DEVICE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=176,
-  serialized_end=212,
+  serialized_start=264,
+  serialized_end=300,
+)
+
+
+_PRESTARTCONTAINERREQUEST = _descriptor.Descriptor(
+  name='PreStartContainerRequest',
+  full_name='v1beta1.PreStartContainerRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='devicesIDs', full_name='v1beta1.PreStartContainerRequest.devicesIDs', index=0,
+      number=1, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=302,
+  serialized_end=348,
+)
+
+
+_PRESTARTCONTAINERRESPONSE = _descriptor.Descriptor(
+  name='PreStartContainerResponse',
+  full_name='v1beta1.PreStartContainerResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=350,
+  serialized_end=377,
 )
 
 
 _ALLOCATEREQUEST = _descriptor.Descriptor(
   name='AllocateRequest',
-  full_name='deviceplugin.AllocateRequest',
+  full_name='v1beta1.AllocateRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='devicesIDs', full_name='deviceplugin.AllocateRequest.devicesIDs', index=0,
-      number=1, type=9, cpp_type=9, label=3,
+      name='container_requests', full_name='v1beta1.AllocateRequest.container_requests', index=0,
+      number=1, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -189,25 +282,56 @@ _ALLOCATEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=214,
-  serialized_end=251,
+  serialized_start=379,
+  serialized_end=459,
+)
+
+
+_CONTAINERALLOCATEREQUEST = _descriptor.Descriptor(
+  name='ContainerAllocateRequest',
+  full_name='v1beta1.ContainerAllocateRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='devicesIDs', full_name='v1beta1.ContainerAllocateRequest.devicesIDs', index=0,
+      number=1, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=461,
+  serialized_end=507,
 )
 
 
 _ALLOCATERESPONSE = _descriptor.Descriptor(
   name='AllocateResponse',
-  full_name='deviceplugin.AllocateResponse',
+  full_name='v1beta1.AllocateResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='spec', full_name='deviceplugin.AllocateResponse.spec', index=0,
+      name='container_responses', full_name='v1beta1.AllocateResponse.container_responses', index=0,
       number=1, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -220,32 +344,32 @@ _ALLOCATERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=253,
-  serialized_end=318,
+  serialized_start=509,
+  serialized_end=592,
 )
 
 
-_DEVICERUNTIMESPEC_ENVSENTRY = _descriptor.Descriptor(
+_CONTAINERALLOCATERESPONSE_ENVSENTRY = _descriptor.Descriptor(
   name='EnvsEntry',
-  full_name='deviceplugin.DeviceRuntimeSpec.EnvsEntry',
+  full_name='v1beta1.ContainerAllocateResponse.EnvsEntry',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='deviceplugin.DeviceRuntimeSpec.EnvsEntry.key', index=0,
+      name='key', full_name='v1beta1.ContainerAllocateResponse.EnvsEntry.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='value', full_name='deviceplugin.DeviceRuntimeSpec.EnvsEntry.value', index=1,
+      name='value', full_name='v1beta1.ContainerAllocateResponse.EnvsEntry.value', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -258,49 +382,86 @@ _DEVICERUNTIMESPEC_ENVSENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=491,
-  serialized_end=534,
+  serialized_start=828,
+  serialized_end=871,
 )
 
-_DEVICERUNTIMESPEC = _descriptor.Descriptor(
-  name='DeviceRuntimeSpec',
-  full_name='deviceplugin.DeviceRuntimeSpec',
+_CONTAINERALLOCATERESPONSE_ANNOTATIONSENTRY = _descriptor.Descriptor(
+  name='AnnotationsEntry',
+  full_name='v1beta1.ContainerAllocateResponse.AnnotationsEntry',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='ID', full_name='deviceplugin.DeviceRuntimeSpec.ID', index=0,
+      name='key', full_name='v1beta1.ContainerAllocateResponse.AnnotationsEntry.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='envs', full_name='deviceplugin.DeviceRuntimeSpec.envs', index=1,
+      name='value', full_name='v1beta1.ContainerAllocateResponse.AnnotationsEntry.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=_descriptor._ParseOptions(descriptor_pb2.MessageOptions(), _b('8\001')),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=873,
+  serialized_end=923,
+)
+
+_CONTAINERALLOCATERESPONSE = _descriptor.Descriptor(
+  name='ContainerAllocateResponse',
+  full_name='v1beta1.ContainerAllocateResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='envs', full_name='v1beta1.ContainerAllocateResponse.envs', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='mounts', full_name='v1beta1.ContainerAllocateResponse.mounts', index=1,
       number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='mounts', full_name='deviceplugin.DeviceRuntimeSpec.mounts', index=2,
+      name='devices', full_name='v1beta1.ContainerAllocateResponse.devices', index=2,
       number=3, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='devices', full_name='deviceplugin.DeviceRuntimeSpec.devices', index=3,
+      name='annotations', full_name='v1beta1.ContainerAllocateResponse.annotations', index=3,
       number=4, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
-  nested_types=[_DEVICERUNTIMESPEC_ENVSENTRY, ],
+  nested_types=[_CONTAINERALLOCATERESPONSE_ENVSENTRY, _CONTAINERALLOCATERESPONSE_ANNOTATIONSENTRY, ],
   enum_types=[
   ],
   options=None,
@@ -309,39 +470,39 @@ _DEVICERUNTIMESPEC = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=321,
-  serialized_end=534,
+  serialized_start=595,
+  serialized_end=923,
 )
 
 
 _MOUNT = _descriptor.Descriptor(
   name='Mount',
-  full_name='deviceplugin.Mount',
+  full_name='v1beta1.Mount',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='container_path', full_name='deviceplugin.Mount.container_path', index=0,
+      name='container_path', full_name='v1beta1.Mount.container_path', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='host_path', full_name='deviceplugin.Mount.host_path', index=1,
+      name='host_path', full_name='v1beta1.Mount.host_path', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='read_only', full_name='deviceplugin.Mount.read_only', index=2,
+      name='read_only', full_name='v1beta1.Mount.read_only', index=2,
       number=3, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -354,39 +515,39 @@ _MOUNT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=536,
-  serialized_end=605,
+  serialized_start=925,
+  serialized_end=994,
 )
 
 
 _DEVICESPEC = _descriptor.Descriptor(
   name='DeviceSpec',
-  full_name='deviceplugin.DeviceSpec',
+  full_name='v1beta1.DeviceSpec',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='container_path', full_name='deviceplugin.DeviceSpec.container_path', index=0,
+      name='container_path', full_name='v1beta1.DeviceSpec.container_path', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='host_path', full_name='deviceplugin.DeviceSpec.host_path', index=1,
+      name='host_path', full_name='v1beta1.DeviceSpec.host_path', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='permissions', full_name='deviceplugin.DeviceSpec.permissions', index=2,
+      name='permissions', full_name='v1beta1.DeviceSpec.permissions', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -399,114 +560,160 @@ _DEVICESPEC = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=607,
-  serialized_end=683,
+  serialized_start=996,
+  serialized_end=1072,
 )
 
+_REGISTERREQUEST.fields_by_name['options'].message_type = _DEVICEPLUGINOPTIONS
 _LISTANDWATCHRESPONSE.fields_by_name['devices'].message_type = _DEVICE
-_ALLOCATERESPONSE.fields_by_name['spec'].message_type = _DEVICERUNTIMESPEC
-_DEVICERUNTIMESPEC_ENVSENTRY.containing_type = _DEVICERUNTIMESPEC
-_DEVICERUNTIMESPEC.fields_by_name['envs'].message_type = _DEVICERUNTIMESPEC_ENVSENTRY
-_DEVICERUNTIMESPEC.fields_by_name['mounts'].message_type = _MOUNT
-_DEVICERUNTIMESPEC.fields_by_name['devices'].message_type = _DEVICESPEC
+_ALLOCATEREQUEST.fields_by_name['container_requests'].message_type = _CONTAINERALLOCATEREQUEST
+_ALLOCATERESPONSE.fields_by_name['container_responses'].message_type = _CONTAINERALLOCATERESPONSE
+_CONTAINERALLOCATERESPONSE_ENVSENTRY.containing_type = _CONTAINERALLOCATERESPONSE
+_CONTAINERALLOCATERESPONSE_ANNOTATIONSENTRY.containing_type = _CONTAINERALLOCATERESPONSE
+_CONTAINERALLOCATERESPONSE.fields_by_name['envs'].message_type = _CONTAINERALLOCATERESPONSE_ENVSENTRY
+_CONTAINERALLOCATERESPONSE.fields_by_name['mounts'].message_type = _MOUNT
+_CONTAINERALLOCATERESPONSE.fields_by_name['devices'].message_type = _DEVICESPEC
+_CONTAINERALLOCATERESPONSE.fields_by_name['annotations'].message_type = _CONTAINERALLOCATERESPONSE_ANNOTATIONSENTRY
+DESCRIPTOR.message_types_by_name['DevicePluginOptions'] = _DEVICEPLUGINOPTIONS
 DESCRIPTOR.message_types_by_name['RegisterRequest'] = _REGISTERREQUEST
 DESCRIPTOR.message_types_by_name['Empty'] = _EMPTY
 DESCRIPTOR.message_types_by_name['ListAndWatchResponse'] = _LISTANDWATCHRESPONSE
 DESCRIPTOR.message_types_by_name['Device'] = _DEVICE
+DESCRIPTOR.message_types_by_name['PreStartContainerRequest'] = _PRESTARTCONTAINERREQUEST
+DESCRIPTOR.message_types_by_name['PreStartContainerResponse'] = _PRESTARTCONTAINERRESPONSE
 DESCRIPTOR.message_types_by_name['AllocateRequest'] = _ALLOCATEREQUEST
+DESCRIPTOR.message_types_by_name['ContainerAllocateRequest'] = _CONTAINERALLOCATEREQUEST
 DESCRIPTOR.message_types_by_name['AllocateResponse'] = _ALLOCATERESPONSE
-DESCRIPTOR.message_types_by_name['DeviceRuntimeSpec'] = _DEVICERUNTIMESPEC
+DESCRIPTOR.message_types_by_name['ContainerAllocateResponse'] = _CONTAINERALLOCATERESPONSE
 DESCRIPTOR.message_types_by_name['Mount'] = _MOUNT
 DESCRIPTOR.message_types_by_name['DeviceSpec'] = _DEVICESPEC
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
+DevicePluginOptions = _reflection.GeneratedProtocolMessageType('DevicePluginOptions', (_message.Message,), dict(
+  DESCRIPTOR = _DEVICEPLUGINOPTIONS,
+  __module__ = 'api_pb2'
+  # @@protoc_insertion_point(class_scope:v1beta1.DevicePluginOptions)
+  ))
+_sym_db.RegisterMessage(DevicePluginOptions)
+
 RegisterRequest = _reflection.GeneratedProtocolMessageType('RegisterRequest', (_message.Message,), dict(
   DESCRIPTOR = _REGISTERREQUEST,
   __module__ = 'api_pb2'
-  # @@protoc_insertion_point(class_scope:deviceplugin.RegisterRequest)
+  # @@protoc_insertion_point(class_scope:v1beta1.RegisterRequest)
   ))
 _sym_db.RegisterMessage(RegisterRequest)
 
 Empty = _reflection.GeneratedProtocolMessageType('Empty', (_message.Message,), dict(
   DESCRIPTOR = _EMPTY,
   __module__ = 'api_pb2'
-  # @@protoc_insertion_point(class_scope:deviceplugin.Empty)
+  # @@protoc_insertion_point(class_scope:v1beta1.Empty)
   ))
 _sym_db.RegisterMessage(Empty)
 
 ListAndWatchResponse = _reflection.GeneratedProtocolMessageType('ListAndWatchResponse', (_message.Message,), dict(
   DESCRIPTOR = _LISTANDWATCHRESPONSE,
   __module__ = 'api_pb2'
-  # @@protoc_insertion_point(class_scope:deviceplugin.ListAndWatchResponse)
+  # @@protoc_insertion_point(class_scope:v1beta1.ListAndWatchResponse)
   ))
 _sym_db.RegisterMessage(ListAndWatchResponse)
 
 Device = _reflection.GeneratedProtocolMessageType('Device', (_message.Message,), dict(
   DESCRIPTOR = _DEVICE,
   __module__ = 'api_pb2'
-  # @@protoc_insertion_point(class_scope:deviceplugin.Device)
+  # @@protoc_insertion_point(class_scope:v1beta1.Device)
   ))
 _sym_db.RegisterMessage(Device)
+
+PreStartContainerRequest = _reflection.GeneratedProtocolMessageType('PreStartContainerRequest', (_message.Message,), dict(
+  DESCRIPTOR = _PRESTARTCONTAINERREQUEST,
+  __module__ = 'api_pb2'
+  # @@protoc_insertion_point(class_scope:v1beta1.PreStartContainerRequest)
+  ))
+_sym_db.RegisterMessage(PreStartContainerRequest)
+
+PreStartContainerResponse = _reflection.GeneratedProtocolMessageType('PreStartContainerResponse', (_message.Message,), dict(
+  DESCRIPTOR = _PRESTARTCONTAINERRESPONSE,
+  __module__ = 'api_pb2'
+  # @@protoc_insertion_point(class_scope:v1beta1.PreStartContainerResponse)
+  ))
+_sym_db.RegisterMessage(PreStartContainerResponse)
 
 AllocateRequest = _reflection.GeneratedProtocolMessageType('AllocateRequest', (_message.Message,), dict(
   DESCRIPTOR = _ALLOCATEREQUEST,
   __module__ = 'api_pb2'
-  # @@protoc_insertion_point(class_scope:deviceplugin.AllocateRequest)
+  # @@protoc_insertion_point(class_scope:v1beta1.AllocateRequest)
   ))
 _sym_db.RegisterMessage(AllocateRequest)
+
+ContainerAllocateRequest = _reflection.GeneratedProtocolMessageType('ContainerAllocateRequest', (_message.Message,), dict(
+  DESCRIPTOR = _CONTAINERALLOCATEREQUEST,
+  __module__ = 'api_pb2'
+  # @@protoc_insertion_point(class_scope:v1beta1.ContainerAllocateRequest)
+  ))
+_sym_db.RegisterMessage(ContainerAllocateRequest)
 
 AllocateResponse = _reflection.GeneratedProtocolMessageType('AllocateResponse', (_message.Message,), dict(
   DESCRIPTOR = _ALLOCATERESPONSE,
   __module__ = 'api_pb2'
-  # @@protoc_insertion_point(class_scope:deviceplugin.AllocateResponse)
+  # @@protoc_insertion_point(class_scope:v1beta1.AllocateResponse)
   ))
 _sym_db.RegisterMessage(AllocateResponse)
 
-DeviceRuntimeSpec = _reflection.GeneratedProtocolMessageType('DeviceRuntimeSpec', (_message.Message,), dict(
+ContainerAllocateResponse = _reflection.GeneratedProtocolMessageType('ContainerAllocateResponse', (_message.Message,), dict(
 
   EnvsEntry = _reflection.GeneratedProtocolMessageType('EnvsEntry', (_message.Message,), dict(
-    DESCRIPTOR = _DEVICERUNTIMESPEC_ENVSENTRY,
+    DESCRIPTOR = _CONTAINERALLOCATERESPONSE_ENVSENTRY,
     __module__ = 'api_pb2'
-    # @@protoc_insertion_point(class_scope:deviceplugin.DeviceRuntimeSpec.EnvsEntry)
+    # @@protoc_insertion_point(class_scope:v1beta1.ContainerAllocateResponse.EnvsEntry)
     ))
   ,
-  DESCRIPTOR = _DEVICERUNTIMESPEC,
+
+  AnnotationsEntry = _reflection.GeneratedProtocolMessageType('AnnotationsEntry', (_message.Message,), dict(
+    DESCRIPTOR = _CONTAINERALLOCATERESPONSE_ANNOTATIONSENTRY,
+    __module__ = 'api_pb2'
+    # @@protoc_insertion_point(class_scope:v1beta1.ContainerAllocateResponse.AnnotationsEntry)
+    ))
+  ,
+  DESCRIPTOR = _CONTAINERALLOCATERESPONSE,
   __module__ = 'api_pb2'
-  # @@protoc_insertion_point(class_scope:deviceplugin.DeviceRuntimeSpec)
+  # @@protoc_insertion_point(class_scope:v1beta1.ContainerAllocateResponse)
   ))
-_sym_db.RegisterMessage(DeviceRuntimeSpec)
-_sym_db.RegisterMessage(DeviceRuntimeSpec.EnvsEntry)
+_sym_db.RegisterMessage(ContainerAllocateResponse)
+_sym_db.RegisterMessage(ContainerAllocateResponse.EnvsEntry)
+_sym_db.RegisterMessage(ContainerAllocateResponse.AnnotationsEntry)
 
 Mount = _reflection.GeneratedProtocolMessageType('Mount', (_message.Message,), dict(
   DESCRIPTOR = _MOUNT,
   __module__ = 'api_pb2'
-  # @@protoc_insertion_point(class_scope:deviceplugin.Mount)
+  # @@protoc_insertion_point(class_scope:v1beta1.Mount)
   ))
 _sym_db.RegisterMessage(Mount)
 
 DeviceSpec = _reflection.GeneratedProtocolMessageType('DeviceSpec', (_message.Message,), dict(
   DESCRIPTOR = _DEVICESPEC,
   __module__ = 'api_pb2'
-  # @@protoc_insertion_point(class_scope:deviceplugin.DeviceSpec)
+  # @@protoc_insertion_point(class_scope:v1beta1.DeviceSpec)
   ))
 _sym_db.RegisterMessage(DeviceSpec)
 
 
-_DEVICERUNTIMESPEC_ENVSENTRY.has_options = True
-_DEVICERUNTIMESPEC_ENVSENTRY._options = _descriptor._ParseOptions(descriptor_pb2.MessageOptions(), _b('8\001'))
+_CONTAINERALLOCATERESPONSE_ENVSENTRY.has_options = True
+_CONTAINERALLOCATERESPONSE_ENVSENTRY._options = _descriptor._ParseOptions(descriptor_pb2.MessageOptions(), _b('8\001'))
+_CONTAINERALLOCATERESPONSE_ANNOTATIONSENTRY.has_options = True
+_CONTAINERALLOCATERESPONSE_ANNOTATIONSENTRY._options = _descriptor._ParseOptions(descriptor_pb2.MessageOptions(), _b('8\001'))
 
 _REGISTRATION = _descriptor.ServiceDescriptor(
   name='Registration',
-  full_name='deviceplugin.Registration',
+  full_name='v1beta1.Registration',
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=685,
-  serialized_end=765,
+  serialized_start=1074,
+  serialized_end=1144,
   methods=[
   _descriptor.MethodDescriptor(
     name='Register',
-    full_name='deviceplugin.Registration.Register',
+    full_name='v1beta1.Registration.Register',
     index=0,
     containing_service=None,
     input_type=_REGISTERREQUEST,
@@ -521,17 +728,26 @@ DESCRIPTOR.services_by_name['Registration'] = _REGISTRATION
 
 _DEVICEPLUGIN = _descriptor.ServiceDescriptor(
   name='DevicePlugin',
-  full_name='deviceplugin.DevicePlugin',
+  full_name='v1beta1.DevicePlugin',
   file=DESCRIPTOR,
   index=1,
   options=None,
-  serialized_start=768,
-  serialized_end=936,
+  serialized_start=1147,
+  serialized_end=1463,
   methods=[
   _descriptor.MethodDescriptor(
-    name='ListAndWatch',
-    full_name='deviceplugin.DevicePlugin.ListAndWatch',
+    name='GetDevicePluginOptions',
+    full_name='v1beta1.DevicePlugin.GetDevicePluginOptions',
     index=0,
+    containing_service=None,
+    input_type=_EMPTY,
+    output_type=_DEVICEPLUGINOPTIONS,
+    options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='ListAndWatch',
+    full_name='v1beta1.DevicePlugin.ListAndWatch',
+    index=1,
     containing_service=None,
     input_type=_EMPTY,
     output_type=_LISTANDWATCHRESPONSE,
@@ -539,11 +755,20 @@ _DEVICEPLUGIN = _descriptor.ServiceDescriptor(
   ),
   _descriptor.MethodDescriptor(
     name='Allocate',
-    full_name='deviceplugin.DevicePlugin.Allocate',
-    index=1,
+    full_name='v1beta1.DevicePlugin.Allocate',
+    index=2,
     containing_service=None,
     input_type=_ALLOCATEREQUEST,
     output_type=_ALLOCATERESPONSE,
+    options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='PreStartContainer',
+    full_name='v1beta1.DevicePlugin.PreStartContainer',
+    index=3,
+    containing_service=None,
+    input_type=_PRESTARTCONTAINERREQUEST,
+    output_type=_PRESTARTCONTAINERRESPONSE,
     options=None,
   ),
 ])
@@ -551,295 +776,4 @@ _sym_db.RegisterServiceDescriptor(_DEVICEPLUGIN)
 
 DESCRIPTOR.services_by_name['DevicePlugin'] = _DEVICEPLUGIN
 
-try:
-  # THESE ELEMENTS WILL BE DEPRECATED.
-  # Please use the generated *_pb2_grpc.py files instead.
-  import grpc
-  from grpc.beta import implementations as beta_implementations
-  from grpc.beta import interfaces as beta_interfaces
-  from grpc.framework.common import cardinality
-  from grpc.framework.interfaces.face import utilities as face_utilities
-
-
-  class RegistrationStub(object):
-    """Registration is the service advertised by the Kubelet
-    Only when Kubelet answers with a success code to a Register Request
-    may Device Plugins start their service
-    Registration may fail when device plugin version is not supported by
-    Kubelet or the registered resourceName is already taken by another
-    active device plugin. Device plugin is expected to terminate upon registration failure
-    """
-
-    def __init__(self, channel):
-      """Constructor.
-
-      Args:
-        channel: A grpc.Channel.
-      """
-      self.Register = channel.unary_unary(
-          '/deviceplugin.Registration/Register',
-          request_serializer=RegisterRequest.SerializeToString,
-          response_deserializer=Empty.FromString,
-          )
-
-
-  class RegistrationServicer(object):
-    """Registration is the service advertised by the Kubelet
-    Only when Kubelet answers with a success code to a Register Request
-    may Device Plugins start their service
-    Registration may fail when device plugin version is not supported by
-    Kubelet or the registered resourceName is already taken by another
-    active device plugin. Device plugin is expected to terminate upon registration failure
-    """
-
-    def Register(self, request, context):
-      # missing associated documentation comment in .proto file
-      pass
-      context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-      context.set_details('Method not implemented!')
-      raise NotImplementedError('Method not implemented!')
-
-
-  def add_RegistrationServicer_to_server(servicer, server):
-    rpc_method_handlers = {
-        'Register': grpc.unary_unary_rpc_method_handler(
-            servicer.Register,
-            request_deserializer=RegisterRequest.FromString,
-            response_serializer=Empty.SerializeToString,
-        ),
-    }
-    generic_handler = grpc.method_handlers_generic_handler(
-        'deviceplugin.Registration', rpc_method_handlers)
-    server.add_generic_rpc_handlers((generic_handler,))
-
-
-  class DevicePluginStub(object):
-    """DevicePlugin is the service advertised by Device Plugins
-    """
-
-    def __init__(self, channel):
-      """Constructor.
-
-      Args:
-        channel: A grpc.Channel.
-      """
-      self.ListAndWatch = channel.unary_stream(
-          '/deviceplugin.DevicePlugin/ListAndWatch',
-          request_serializer=Empty.SerializeToString,
-          response_deserializer=ListAndWatchResponse.FromString,
-          )
-      self.Allocate = channel.unary_unary(
-          '/deviceplugin.DevicePlugin/Allocate',
-          request_serializer=AllocateRequest.SerializeToString,
-          response_deserializer=AllocateResponse.FromString,
-          )
-
-
-  class DevicePluginServicer(object):
-    """DevicePlugin is the service advertised by Device Plugins
-    """
-
-    def ListAndWatch(self, request, context):
-      """ListAndWatch returns a stream of List of Devices
-      Whenever a Device state change or a Device disapears, ListAndWatch
-      returns the new list
-      """
-      context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-      context.set_details('Method not implemented!')
-      raise NotImplementedError('Method not implemented!')
-
-    def Allocate(self, request, context):
-      """Allocate is called during container creation so that the Device
-      Plugin can run device specific operations and instruct Kubelet
-      of the steps to make the Device available in the container
-      """
-      context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-      context.set_details('Method not implemented!')
-      raise NotImplementedError('Method not implemented!')
-
-
-  def add_DevicePluginServicer_to_server(servicer, server):
-    rpc_method_handlers = {
-        'ListAndWatch': grpc.unary_stream_rpc_method_handler(
-            servicer.ListAndWatch,
-            request_deserializer=Empty.FromString,
-            response_serializer=ListAndWatchResponse.SerializeToString,
-        ),
-        'Allocate': grpc.unary_unary_rpc_method_handler(
-            servicer.Allocate,
-            request_deserializer=AllocateRequest.FromString,
-            response_serializer=AllocateResponse.SerializeToString,
-        ),
-    }
-    generic_handler = grpc.method_handlers_generic_handler(
-        'deviceplugin.DevicePlugin', rpc_method_handlers)
-    server.add_generic_rpc_handlers((generic_handler,))
-
-
-  class BetaRegistrationServicer(object):
-    """The Beta API is deprecated for 0.15.0 and later.
-
-    It is recommended to use the GA API (classes and functions in this
-    file not marked beta) for all further purposes. This class was generated
-    only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0."""
-    """Registration is the service advertised by the Kubelet
-    Only when Kubelet answers with a success code to a Register Request
-    may Device Plugins start their service
-    Registration may fail when device plugin version is not supported by
-    Kubelet or the registered resourceName is already taken by another
-    active device plugin. Device plugin is expected to terminate upon registration failure
-    """
-    def Register(self, request, context):
-      # missing associated documentation comment in .proto file
-      pass
-      context.code(beta_interfaces.StatusCode.UNIMPLEMENTED)
-
-
-  class BetaRegistrationStub(object):
-    """The Beta API is deprecated for 0.15.0 and later.
-
-    It is recommended to use the GA API (classes and functions in this
-    file not marked beta) for all further purposes. This class was generated
-    only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0."""
-    """Registration is the service advertised by the Kubelet
-    Only when Kubelet answers with a success code to a Register Request
-    may Device Plugins start their service
-    Registration may fail when device plugin version is not supported by
-    Kubelet or the registered resourceName is already taken by another
-    active device plugin. Device plugin is expected to terminate upon registration failure
-    """
-    def Register(self, request, timeout, metadata=None, with_call=False, protocol_options=None):
-      # missing associated documentation comment in .proto file
-      pass
-      raise NotImplementedError()
-    Register.future = None
-
-
-  def beta_create_Registration_server(servicer, pool=None, pool_size=None, default_timeout=None, maximum_timeout=None):
-    """The Beta API is deprecated for 0.15.0 and later.
-
-    It is recommended to use the GA API (classes and functions in this
-    file not marked beta) for all further purposes. This function was
-    generated only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0"""
-    request_deserializers = {
-      ('deviceplugin.Registration', 'Register'): RegisterRequest.FromString,
-    }
-    response_serializers = {
-      ('deviceplugin.Registration', 'Register'): Empty.SerializeToString,
-    }
-    method_implementations = {
-      ('deviceplugin.Registration', 'Register'): face_utilities.unary_unary_inline(servicer.Register),
-    }
-    server_options = beta_implementations.server_options(request_deserializers=request_deserializers, response_serializers=response_serializers, thread_pool=pool, thread_pool_size=pool_size, default_timeout=default_timeout, maximum_timeout=maximum_timeout)
-    return beta_implementations.server(method_implementations, options=server_options)
-
-
-  def beta_create_Registration_stub(channel, host=None, metadata_transformer=None, pool=None, pool_size=None):
-    """The Beta API is deprecated for 0.15.0 and later.
-
-    It is recommended to use the GA API (classes and functions in this
-    file not marked beta) for all further purposes. This function was
-    generated only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0"""
-    request_serializers = {
-      ('deviceplugin.Registration', 'Register'): RegisterRequest.SerializeToString,
-    }
-    response_deserializers = {
-      ('deviceplugin.Registration', 'Register'): Empty.FromString,
-    }
-    cardinalities = {
-      'Register': cardinality.Cardinality.UNARY_UNARY,
-    }
-    stub_options = beta_implementations.stub_options(host=host, metadata_transformer=metadata_transformer, request_serializers=request_serializers, response_deserializers=response_deserializers, thread_pool=pool, thread_pool_size=pool_size)
-    return beta_implementations.dynamic_stub(channel, 'deviceplugin.Registration', cardinalities, options=stub_options)
-
-
-  class BetaDevicePluginServicer(object):
-    """The Beta API is deprecated for 0.15.0 and later.
-
-    It is recommended to use the GA API (classes and functions in this
-    file not marked beta) for all further purposes. This class was generated
-    only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0."""
-    """DevicePlugin is the service advertised by Device Plugins
-    """
-    def ListAndWatch(self, request, context):
-      """ListAndWatch returns a stream of List of Devices
-      Whenever a Device state change or a Device disapears, ListAndWatch
-      returns the new list
-      """
-      context.code(beta_interfaces.StatusCode.UNIMPLEMENTED)
-    def Allocate(self, request, context):
-      """Allocate is called during container creation so that the Device
-      Plugin can run device specific operations and instruct Kubelet
-      of the steps to make the Device available in the container
-      """
-      context.code(beta_interfaces.StatusCode.UNIMPLEMENTED)
-
-
-  class BetaDevicePluginStub(object):
-    """The Beta API is deprecated for 0.15.0 and later.
-
-    It is recommended to use the GA API (classes and functions in this
-    file not marked beta) for all further purposes. This class was generated
-    only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0."""
-    """DevicePlugin is the service advertised by Device Plugins
-    """
-    def ListAndWatch(self, request, timeout, metadata=None, with_call=False, protocol_options=None):
-      """ListAndWatch returns a stream of List of Devices
-      Whenever a Device state change or a Device disapears, ListAndWatch
-      returns the new list
-      """
-      raise NotImplementedError()
-    def Allocate(self, request, timeout, metadata=None, with_call=False, protocol_options=None):
-      """Allocate is called during container creation so that the Device
-      Plugin can run device specific operations and instruct Kubelet
-      of the steps to make the Device available in the container
-      """
-      raise NotImplementedError()
-    Allocate.future = None
-
-
-  def beta_create_DevicePlugin_server(servicer, pool=None, pool_size=None, default_timeout=None, maximum_timeout=None):
-    """The Beta API is deprecated for 0.15.0 and later.
-
-    It is recommended to use the GA API (classes and functions in this
-    file not marked beta) for all further purposes. This function was
-    generated only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0"""
-    request_deserializers = {
-      ('deviceplugin.DevicePlugin', 'Allocate'): AllocateRequest.FromString,
-      ('deviceplugin.DevicePlugin', 'ListAndWatch'): Empty.FromString,
-    }
-    response_serializers = {
-      ('deviceplugin.DevicePlugin', 'Allocate'): AllocateResponse.SerializeToString,
-      ('deviceplugin.DevicePlugin', 'ListAndWatch'): ListAndWatchResponse.SerializeToString,
-    }
-    method_implementations = {
-      ('deviceplugin.DevicePlugin', 'Allocate'): face_utilities.unary_unary_inline(servicer.Allocate),
-      ('deviceplugin.DevicePlugin', 'ListAndWatch'): face_utilities.unary_stream_inline(servicer.ListAndWatch),
-    }
-    server_options = beta_implementations.server_options(request_deserializers=request_deserializers, response_serializers=response_serializers, thread_pool=pool, thread_pool_size=pool_size, default_timeout=default_timeout, maximum_timeout=maximum_timeout)
-    return beta_implementations.server(method_implementations, options=server_options)
-
-
-  def beta_create_DevicePlugin_stub(channel, host=None, metadata_transformer=None, pool=None, pool_size=None):
-    """The Beta API is deprecated for 0.15.0 and later.
-
-    It is recommended to use the GA API (classes and functions in this
-    file not marked beta) for all further purposes. This function was
-    generated only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0"""
-    request_serializers = {
-      ('deviceplugin.DevicePlugin', 'Allocate'): AllocateRequest.SerializeToString,
-      ('deviceplugin.DevicePlugin', 'ListAndWatch'): Empty.SerializeToString,
-    }
-    response_deserializers = {
-      ('deviceplugin.DevicePlugin', 'Allocate'): AllocateResponse.FromString,
-      ('deviceplugin.DevicePlugin', 'ListAndWatch'): ListAndWatchResponse.FromString,
-    }
-    cardinalities = {
-      'Allocate': cardinality.Cardinality.UNARY_UNARY,
-      'ListAndWatch': cardinality.Cardinality.UNARY_STREAM,
-    }
-    stub_options = beta_implementations.stub_options(host=host, metadata_transformer=metadata_transformer, request_serializers=request_serializers, response_deserializers=response_deserializers, thread_pool=pool, thread_pool_size=pool_size)
-    return beta_implementations.dynamic_stub(channel, 'deviceplugin.DevicePlugin', cardinalities, options=stub_options)
-except ImportError:
-  pass
 # @@protoc_insertion_point(module_scope)
