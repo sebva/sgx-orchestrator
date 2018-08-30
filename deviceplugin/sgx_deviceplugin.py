@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import sys
+
 import os
 import time
 from concurrent import futures
@@ -10,7 +12,11 @@ from api import api_pb2_grpc
 
 healthy = "Healthy"
 unhealthy = "Unhealthy"
-sgx_socket_path = '/var/lib/kubelet/device-plugins/sgx.sock'
+api_version = "v1beta1"
+sgx_endpoint = 'sgx.sock'
+resource_name = 'intel.com/sgx'
+sgx_device_path = '/dev/isgx'
+sgx_socket_path = '/var/lib/kubelet/device-plugins/' + sgx_endpoint
 kubelet_socket_path = 'unix:///var/lib/kubelet/device-plugins/kubelet.sock'
 
 
@@ -23,44 +29,42 @@ class SgxPluginService(api_pb2_grpc.DevicePluginServicer):
 
             devices = [api_pb2.Device(ID=("sgx%d" % x), health=healthy) for x in range(total_epc)]
             yield api_pb2.ListAndWatchResponse(devices=devices)
-            time.sleep(10)
+            time.sleep(60)
 
-    def Allocate(self, request: api_pb2.AllocateRequest, context):
-        print("Allocate(%d pages)" % len(request.devicesIDs))
+    def Allocate(self, alloc_request: api_pb2.AllocateRequest, context):
+        responses = []
 
-        requested_ids = request.devicesIDs
+        for request in alloc_request.container_requests:
+            print("Allocate(%d pages)" % len(request.devicesIDs))
 
-        devices = []
-        if len(requested_ids) > 0:
-            device0 = [api_pb2.DeviceRuntimeSpec(
-                ID=requested_ids[0],
-                envs=dict(),
-                mounts=[],
-                devices=[
-                    api_pb2.DeviceSpec(
-                        container_path='/dev/isgx',
-                        host_path='/dev/isgx',
-                        permissions='rw'
-                    )
-                ]
-            )]
-
-            devices = device0 + [
-                api_pb2.DeviceRuntimeSpec(
-                    ID=x,
+            responses += [
+                api_pb2.ContainerAllocateResponse(
+                    annotations=(),
                     envs=dict(),
                     mounts=[],
-                    devices=[]
+                    devices=[
+                        api_pb2.DeviceSpec(
+                            container_path=sgx_device_path,
+                            host_path=sgx_device_path,
+                            permissions='rw'
+                        )] if index == 0 else []
                 )
-                for x in requested_ids[1:]
+                for index, item in enumerate(request.devicesIDs)
             ]
 
-        return api_pb2.AllocateResponse(spec=devices)
+        return api_pb2.AllocateResponse(container_responses=responses)
+
+    def GetDevicePluginOptions(self, request, context):
+        return api_pb2.DevicePluginOptions(pre_start_required=False)
 
 
 def fetch_total_epc():
-    with open('/sys/module/isgx/parameters/sgx_nr_total_epc_pages') as f:
-        return int(f.readline())
+    try:
+        with open('/sys/module/isgx/parameters/sgx_nr_total_epc_pages') as f:
+            return int(f.readline())
+    except FileNotFoundError:
+        print("You are using the vanilla version of the Intel SGX driver. Using 93.5 MiB as EPC size.", file=sys.stderr)
+        return 23936
 
 
 def serve():
@@ -74,7 +78,12 @@ def serve():
 def register():
     channel = grpc.insecure_channel(kubelet_socket_path)
     stub = api_pb2_grpc.RegistrationStub(channel)
-    register_message = api_pb2.RegisterRequest(version='0.1', endpoint='sgx.sock', resource_name='intel.com/sgx')
+    register_message = api_pb2.RegisterRequest(
+        version=api_version,
+        endpoint=sgx_endpoint,
+        resource_name=resource_name,
+        options=api_pb2.DevicePluginOptions(pre_start_required=False)
+    )
     response = stub.Register(register_message)
     print("Client received: " + str(response))
     return response
