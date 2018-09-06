@@ -50,7 +50,7 @@ Execute these commands **on the master machine only**, using the normal user cre
 ```yaml
 apiVersion: kubeadm.k8s.io/v1alpha1
 imageRepository: "172.16.0.25:5000"
-kubernetesVersion: v1.8.0
+kubernetesVersion: v1.11.2
 networking:
   podSubnet: 10.244.0.0/16
 ```
