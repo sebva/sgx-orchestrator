@@ -20,3 +20,6 @@
 [submodule "heapster"]
 	path = heapster
 	url = https://github.com/kubernetes/heapster.git
+[submodule "deviceplugin"]
+	path = deviceplugin
+	url = https://github.com/sebva/sgx-device-plugin.git
