@@ -103,9 +103,9 @@ sudo modprobe isgx
 
 ### Custom version of Kubernetes
 
-We ship a custom version of Kubernetes to enable the *deviceplugin* alpha feature by default, and implement EPC utilisation limits.
-We refer to the official documentation given by Kubernetes' developers for [building instructions](https://github.com/kubernetes/kubernetes/blob/v1.8.5/build/README.md).
-We use [*kubeadm*](https://v1-8.docs.kubernetes.io/docs/setup/independent/create-cluster-kubeadm/) to deploy our test cluster.
+We ship a custom version of Kubernetes to implement EPC utilisation limits.
+We refer to the official documentation given by Kubernetes' developers for [building instructions](https://github.com/kubernetes/kubernetes/blob/v1.11.2/build/README.md).
+We use [*kubeadm*](https://v1-11.docs.kubernetes.io/docs/setup/independent/create-cluster-kubeadm/) to deploy our test cluster.
 We similarly refer to its official documentation for deployment guidance.
 
 Some documentation of ours is also available in the `docs/` directory.
@@ -117,13 +117,10 @@ The goal of the device plugin is to enable the execution of SGX
 applications on Kubernetes nodes. It fetches the number of trusted EPC
 pages available on each node, and communicates it to Kubelet.
 
-As this component is written in Python, no compilation is needed. It has
-to be deployed on each SGX-enabled node in the Kubernetes cluster. It
-suffices to run `sgx_deviceplugin.py` as a daemon (as root) to fully take
-advantage of it.
-No external dependencies are needed.
-
-_Note:_ We plan to package this component as a Kubernetes _DaemonSet_ in a future revision.
+In order to deploy the device plugin to your Kubernetes cluster, it suffices to create a DaemonSet using the following command:
+```bash
+kubectl apply -f sgx_deviceplugin.yml
+```
 
 ### Heapster
 
