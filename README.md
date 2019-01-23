@@ -37,7 +37,18 @@ If you use this work in your reasearch, please cite our paper [_"SGX-Aware Conta
 
 Also, if you use _Stress-SGX_ as a workload, please also cite the corresponding paper [_"Stress-SGX: Load and Stress your Enclaves for Fun and Profit"_](https://seb.vaucher.org/papers/stress-sgx.pdf).
 
-_BibTeX entry details will be included here after the proceedings of NETYS 2018 are published._
+```
+@inproceedings{vaucher2019stresssgx,
+    author={Vaucher, S{\'e}bastien and Schiavoni, Valerio and Felber, Pascal},
+    title={{Stress-SGX}: Load and Stress Your Enclaves for Fun and Profit},
+    booktitle={Networked Systems},
+    year={2019},
+    publisher={Springer International Publishing},
+    pages={358--363},
+    doi={10.1007/978-3-030-05529-5_24},
+    isbn={978-3-030-05529-5},
+}
+```
 
 Sources organization, compilation and deployment
 ------------------------------------------------
