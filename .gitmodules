@@ -1,9 +1,9 @@
 [submodule "sgx-app/sgx_common"]
 	path = sgx-app/sgx_common
-	url = https://gitlab.securecloud.works/rafael.pires/sgx_common.git
+	url = https://github.com/rafaelppires/sgx_common.git
 [submodule "sgx-app-mem/sgx_common"]
 	path = sgx-app-mem/sgx_common
-	url = https://gitlab.securecloud.works/rafael.pires/sgx_common.git
+	url = https://github.com/rafaelppires/sgx_common.git
 [submodule "docker-sgx"]
 	path = docker-sgx
 	url = https://github.com/sebva/docker-sgx.git
