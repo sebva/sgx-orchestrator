@@ -20,7 +20,7 @@ If not, see <http://www.gnu.org/licenses/>.
 Citing this work in your own research article
 ---------------------------------------------
 
-If you use this work in your reasearch, please cite our paper [_"SGX-Aware Container Orchestration for Heterogeneous Clusters"_](https://arxiv.org/pdf/1805.05847.pdf).
+If you use this work in your research, please cite our paper [_"SGX-Aware Container Orchestration for Heterogeneous Clusters"_](https://arxiv.org/pdf/1805.05847.pdf).
 
 ```
 @inproceedings{vaucher2018sgxaware,
