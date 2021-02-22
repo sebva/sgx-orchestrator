@@ -1,3 +1,5 @@
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fsebva%2Fsgx-orchestrator.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fsebva%2Fsgx-orchestrator?ref=badge_shield)
+
 SGX-aware container orchestrator
 ================================
 
@@ -378,3 +380,7 @@ job_id,duration,requested_pages,actual_pages,is_sgx,runner_start_time,k8s_create
 14000,300,791,645,True,2017-12-11 15:40:06.715891,2017-12-11 15:40:06+00:00,2017-12-11 15:40:14+00:00,2017-12-11 15:45:14+00:00
 ```
 
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fsebva%2Fsgx-orchestrator.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fsebva%2Fsgx-orchestrator?ref=badge_large)
